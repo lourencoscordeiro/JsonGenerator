@@ -1,5 +1,7 @@
 package json.models
 
+import json.visitors.interfaces.Visitor
+
 /**
  * Representation of a String in JSON.
  */
@@ -8,5 +10,7 @@ data class JsonString(private val value: String, override val depth: Int = 0) : 
     override fun toPrettyJsonString(): String = "\"$value\""
 
     override fun toString(): String = toPrettyJsonString()
-
+    override fun accept(visitor: Visitor) {
+        visitor.visit(this)
+    }
 }
