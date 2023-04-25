@@ -39,25 +39,25 @@ fun main() {
 
 
 
-        var visitor = ValueVisitor("nome")
+        val visitor = ValueVisitor("nome")
         obj.accept(visitor)
         val visitorResult = visitor.getValues()
         println(visitorResult)
 
         val list = listOf("nome", "numero")
 
-        var objectVisitor = ObjectVisitor(list)
+        val objectVisitor = ObjectVisitor(list)
         obj.accept(objectVisitor)
         val objectVisitorResult = objectVisitor.getObjects()
         println(objectVisitorResult)
 
 
-        var numberValidatorVisitor = NumberValidationVisitor()
+        val numberValidatorVisitor = NumberValidationVisitor()
         obj.accept(numberValidatorVisitor)
         val numberVisitorResult = numberValidatorVisitor.isValid
         println("isValid = $numberVisitorResult")
 
-        var inscritosValidationVisitor = InscritosValidationVisitor()
+        val inscritosValidationVisitor = InscritosValidationVisitor()
         obj.accept(inscritosValidationVisitor)
         val inscritosVisitorResult = inscritosValidationVisitor.isValid
         println("isValid = $inscritosVisitorResult")
