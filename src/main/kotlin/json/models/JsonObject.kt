@@ -3,7 +3,7 @@ package json.models
 /**
  * Representation of an Object in JSON. Consists on a map of its attributes (name and JSON Element).
  */
-data class JsonObject(private val attributes: List<JsonKeyValuePair> = listOf(), override val depth: Int = 0) :
+data class JsonObject(val attributes: List<JsonKeyValuePair> = listOf(), override val depth: Int = 0) :
     JsonElement {
 
     override fun toPrettyJsonString(): String =
