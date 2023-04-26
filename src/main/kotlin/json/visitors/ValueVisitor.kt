@@ -6,9 +6,11 @@ import json.visitors.interfaces.Visitor
 
 class ValueVisitor(private val property:String): Visitor {
     private val values = mutableListOf<JsonElement>()
-    override fun visit(element:JsonElement) {
-        if(element is JsonKeyValuePair && element.getName() == property)
-                    values.add(element.getValue())
+
+
+    override fun visit(keyValuePair: JsonKeyValuePair) {
+        if(keyValuePair.getName() == property)
+            values.add(keyValuePair.getValue())
     }
 
     fun getValues() = values

@@ -36,32 +36,33 @@ fun main() {
     val obj = JsonObject(listOf(uc,ects,data_exame,inscritos))
 
     print(obj)
+    val list = listOf("nome", "numero")
+
+    val visitor = ValueVisitor("nome")
+    obj.accept(visitor)
+    val visitorResult = visitor.getValues()
+    println(visitorResult)
 
 
-
-        val visitor = ValueVisitor("nome")
-        obj.accept(visitor)
-        val visitorResult = visitor.getValues()
-        println(visitorResult)
-
-        val list = listOf("nome", "numero")
-
-        val objectVisitor = ObjectVisitor(list)
-        obj.accept(objectVisitor)
-        val objectVisitorResult = objectVisitor.getObjects()
-        println(objectVisitorResult)
+    /*
 
 
-        val numberValidatorVisitor = NumberValidationVisitor()
-        obj.accept(numberValidatorVisitor)
-        val numberVisitorResult = numberValidatorVisitor.isValid
-        println("isValid = $numberVisitorResult")
-
-        val inscritosValidationVisitor = InscritosValidationVisitor()
-        obj.accept(inscritosValidationVisitor)
-        val inscritosVisitorResult = inscritosValidationVisitor.isValid
-        println("isValid = $inscritosVisitorResult")
+val objectVisitor = ObjectVisitor(list)
+    obj.accept(objectVisitor)
+    val objectVisitorResult = objectVisitor.getObjects()
+    println(objectVisitorResult)
 
 
+            val numberValidatorVisitor = NumberValidationVisitor()
+            obj.accept(numberValidatorVisitor)
+            val numberVisitorResult = numberValidatorVisitor.isValid
+            println("isValid = $numberVisitorResult")
+
+            val inscritosValidationVisitor = InscritosValidationVisitor()
+            obj.accept(inscritosValidationVisitor)
+            val inscritosVisitorResult = inscritosValidationVisitor.isValid
+            println("isValid = $inscritosVisitorResult")
+
+    */
 
 }

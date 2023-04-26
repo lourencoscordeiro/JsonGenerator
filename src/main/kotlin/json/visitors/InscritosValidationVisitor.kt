@@ -11,9 +11,9 @@ class InscritosValidationVisitor:Visitor {
         private set
     private var reference: List<String>? = null
 
-    override fun visit(element: JsonElement) {
-        if (element is JsonKeyValuePair && element.getName() == "inscritos" && element.getValue() is JsonList) {
-            val jsonList = element.getValue() as JsonList
+    override fun visit(jsonKeyValuePair: JsonKeyValuePair) {
+        if (jsonKeyValuePair.getName() == "inscritos" && jsonKeyValuePair.getValue() is JsonList) {
+            val jsonList = jsonKeyValuePair.getValue() as JsonList
             jsonList.getElements().forEach { jsonElement ->
                 if (jsonElement is JsonObject) {
                     val objectStructure = jsonElement.getAttributes().map { it.getName() }

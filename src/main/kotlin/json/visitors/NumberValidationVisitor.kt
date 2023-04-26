@@ -9,9 +9,9 @@ class NumberValidationVisitor: Visitor {
     var isValid = true
         private set
 
-    override fun visit(element: JsonElement) {
-        if (element is JsonKeyValuePair && element.getName() == "numero") {
-            if (element.getValue() !is JsonNumber || (element.getValue() as JsonNumber).getValue() !is Int) {
+    override fun visit(jsonKeyValuePair: JsonKeyValuePair) {
+        if (jsonKeyValuePair.getName() == "numero") {
+            if (jsonKeyValuePair.getValue() !is JsonNumber || (jsonKeyValuePair.getValue() as JsonNumber).getValue() !is Int) {
                 isValid = false
             }
         }
