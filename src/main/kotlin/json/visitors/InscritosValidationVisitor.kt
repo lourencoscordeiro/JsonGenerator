@@ -6,11 +6,17 @@ import json.models.JsonList
 import json.models.JsonObject
 import json.visitors.interfaces.Visitor
 
+/**
+ * Validates if the structure of "inscritos" property is allways the same
+ */
 class InscritosValidationVisitor:Visitor {
     var isValid = true
         private set
     private var reference: List<String>? = null
 
+    /**
+    *Verifies the "inscritos" property is allways an array where all the objects have the same structure
+     */
     override fun visit(jsonKeyValuePair: JsonKeyValuePair) {
         if (jsonKeyValuePair.getName() == "inscritos" && jsonKeyValuePair.getValue() is JsonList) {
             val jsonList = jsonKeyValuePair.getValue() as JsonList

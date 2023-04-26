@@ -20,5 +20,6 @@ data class JsonObject(private val attributes: List<JsonKeyValuePair> = listOf(),
             it.accept(visitor)
         }
     }
+
     fun getAttributes()=attributes
 }

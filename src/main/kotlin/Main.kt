@@ -1,8 +1,5 @@
 import json.models.*
-import json.visitors.InscritosValidationVisitor
-import json.visitors.NumberValidationVisitor
-import json.visitors.ObjectVisitor
-import json.visitors.ValueVisitor
+import json.visitors.ValueFinderVisitor
 
 fun main() {
 
@@ -38,7 +35,7 @@ fun main() {
     print(obj)
     val list = listOf("nome", "numero")
 
-    val visitor = ValueVisitor("nome")
+    val visitor = ValueFinderVisitor("nome")
     obj.accept(visitor)
     val visitorResult = visitor.getValues()
     println(visitorResult)
