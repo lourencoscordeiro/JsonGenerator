@@ -2,21 +2,26 @@ package json.visitors
 
 import json.models.JsonElement
 import json.models.JsonKeyValuePair
-import json.visitors.interfaces.Visitor
+import json.models.JsonList
 
 /**
- * Given a property it finds all the values stored in that
+ * Given a property it finds all the values in the JSON tree stored with that property name.
  */
-class ValueFinderVisitor(private val property:String): Visitor {
+class ValueFinderVisitor(private val propertyName: String) : Visitor {
+
     private val values = mutableListOf<JsonElement>()
 
     /**
-     * Get all the values from a certain property
+     * Visits a [JsonKeyValuePair] and performs the Visitor's job.
      */
     override fun visit(keyValuePair: JsonKeyValuePair) {
-        if(keyValuePair.getName() == property)
-            values.add(keyValuePair.getValue())
+        if (keyValuePair.name == propertyName)
+            values.add(keyValuePair.value)
     }
 
-    fun getValues() = values
+    /**
+     * @return the values of the JSON tree in which the property name matches [ValueFinderVisitor.propertyName].
+     * Should only be called when visitation is over.
+     */
+    fun getValues() = listOf(values).flatten()
 }

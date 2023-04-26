@@ -1,11 +1,18 @@
 package json.models
 
-import json.visitors.interfaces.Visitor
+import json.printer.JsonElementPrinter
+import json.visitors.Visitor
 
 /**
  * Abstraction that represents any type of JSON Element.
  */
 interface JsonElement {
+
+    /**
+     * Entry point for a Visitor. Follows Visitor design pattern to allow
+     * performing additional logic onto JSON Elements.
+     */
+    fun accept(visitor: Visitor)
 
     /**
      * Represents the depth of the element inside the JSON
@@ -19,7 +26,9 @@ interface JsonElement {
     fun toPrettyJsonString(): String
 
     /**
-    *Accepts a visitor and calls its visit method passing this object as a parameter.
+     * Prints the element.
      */
-    fun accept(visitor: Visitor) {}
+    fun print(printer: JsonElementPrinter = JsonElementPrinter.toConsole()) {
+        printer.print(this)
+    }
 }

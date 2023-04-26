@@ -10,7 +10,7 @@ fun main() {
 
     val UC =  JsonString("PA")
     val ECTS = JsonNumber(6.0)
-    val DATA_EXAME = JsonNumber(null)
+    val DATA_EXAME = JsonNullNode()
     val NUMERO =JsonKeyValuePair("numero", JsonNumber(101101.1,3))
     val NUMERO2 =JsonKeyValuePair("numero", JsonNumber(101102,3))
     val NUMERO3 =JsonKeyValuePair("numero", JsonNumber(26503,3))

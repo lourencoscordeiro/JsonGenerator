@@ -271,7 +271,7 @@ internal class JsonGeneratorTest {
     }
 
     @Test
-    fun `maps simple object correctly`() {
+    fun `maps object correctly`() {
         val simpleTestDataClass = SimpleTestDataClass(101, "some text", true)
         val objectDataMap = mapOf(
             "number" to JsonNumber(101, 1),
@@ -296,7 +296,7 @@ internal class JsonGeneratorTest {
     }
 
     @Test
-    fun `maps simple object with JsonExclude correctly`() {
+    fun `maps object with JsonExclude correctly`() {
         val simpleTestDataClassWithJsonIgnore = SimpleTestDataClassWithJsonIgnore(101, "some text", true)
         val objectDataMap = mapOf(
             "number" to JsonNumber(101, 1),
@@ -318,7 +318,7 @@ internal class JsonGeneratorTest {
     }
 
     @Test
-    fun `maps simple object correctly with AsJsonString`() {
+    fun `maps object correctly with AsJsonString`() {
         val simpleTestDataClass = SimpleTestDataClassWithAsJsonString(101, "some text", true)
         val objectDataMap = mapOf(
             "number" to JsonNumber(101, 1),
@@ -343,7 +343,7 @@ internal class JsonGeneratorTest {
     }
 
     @Test
-    fun `maps simple object correctly wth renamed json property`() {
+    fun `maps object correctly wth renamed json property`() {
         val simpleTestDataClassWithRenamedProperty = SimpleTestDataClassWithRenamedProperty(101, "some text", true)
         val objectDataMap = mapOf(
             "number" to JsonNumber(101, 1),
@@ -368,28 +368,6 @@ internal class JsonGeneratorTest {
 
         println(result)
     }
-
-//    @Test
-//    fun `maps simple object correctly`() {
-//        val simpleTestDataClass = SimpleTestDataClass(101101, "Dave Farley", true)
-//        val simpleTestDataClass2 = SimpleTestDataClass(101102, "Martin Fowler", true)
-//        val simpleTestDataClass3 = SimpleTestDataClass(26503, "André Santos", false)
-//        val listOfSimpleTestDataClass = listOf(simpleTestDataClass, simpleTestDataClass2, simpleTestDataClass3)
-//        val complexTestDataClass = ComplexTestDataClass(TestEnum.PA, 6.0, null, listOfSimpleTestDataClass)
-//
-//        whenever(typeMappingMock.convertNumber(101101, 0)).thenReturn(JsonNumber(101101))
-//        whenever(typeMappingMock.convertNumber(101102, 0)).thenReturn(JsonNumber(101102))
-//        whenever(typeMappingMock.convertNumber(26503, 0)).thenReturn(JsonNumber(26503))
-//
-//        whenever(typeMappingMock.convertString("Dave Farley", 0)).thenReturn(JsonString("Dave Farley"))
-//        whenever(typeMappingMock.convertString("Martin Fowler", 0)).thenReturn(JsonString("Martin Fowler"))
-//        whenever(typeMappingMock.convertString("André Santos", 0)).thenReturn(JsonString("André Santos"))
-//
-//        whenever(typeMappingMock.convertBoolean(true, 0)).thenReturn(JsonBoolean(true))
-//        whenever(typeMappingMock.convertBoolean(false, 0)).thenReturn(JsonBoolean(false))
-//
-//
-//    }
 
     @Test
     fun `maps null value correctly`() {
