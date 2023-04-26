@@ -1,64 +1,65 @@
 import json.models.*
+import json.visitors.ValueFinderVisitor
 
 fun main() {
 
-    // only for tests mid-development
-    // delete after
 
-    val jsonString = JsonString("attr-one", 1)
-    val jsonNumber = JsonNumber(12278, 1)
-    val jsonBool = JsonBoolean(false, 1)
 
-    val jsonStringAttribute = JsonKeyValuePair("json-string", jsonString)
-    val jsonNumberAttribute = JsonKeyValuePair("json-number", jsonNumber)
-    val jsonBoolAttribute = JsonKeyValuePair("json-boolean", jsonBool)
 
-    val jsonString1 = JsonString("attr-one", 2)
-    val jsonNumber1 = JsonNumber(12278, 2)
-    val jsonBool1 = JsonBoolean(false, 2)
 
-    val jsonString2 = JsonString("attr-one", 2)
-    val jsonNumber2 = JsonNumber(12278, 2)
-    val jsonBool2 = JsonBoolean(false, 2)
 
-    val jsonStringAttribute1 = JsonKeyValuePair("json-string", jsonString2)
-    val jsonNumberAttribute1 = JsonKeyValuePair("json-number", jsonNumber2)
-    val jsonBoolAttribute1 = JsonKeyValuePair("json-boolean", jsonBool2)
+    val UC =  JsonString("PA")
+    val ECTS = JsonNumber(6.0)
+    val DATA_EXAME = JsonNumber(null)
+    val NUMERO =JsonKeyValuePair("numero", JsonNumber(101101.1,3))
+    val NUMERO2 =JsonKeyValuePair("numero", JsonNumber(101102,3))
+    val NUMERO3 =JsonKeyValuePair("numero", JsonNumber(26503,3))
+    val NOME =JsonKeyValuePair("nome", JsonString("Dave Farley",3))
+    val NOME2 =JsonKeyValuePair("nome", JsonString("Martin Fowler",3))
+    val NOME3 =JsonKeyValuePair("nome", JsonString("André Santos",3))
+    val INTERNACIONAL = JsonKeyValuePair("internacional", JsonBoolean(true,3))
+    val INTERNACIONAL2 = JsonKeyValuePair("internacional", JsonBoolean(true,3))
+    val INTERNACIONAL3 = JsonKeyValuePair("internacional", JsonBoolean(false,3))
+    //val jsonObject = JsonObject(listOf(NUMERO, NOME),2)
+    val jsonObject = JsonObject(listOf(NUMERO, NOME,INTERNACIONAL),2)
+    val jsonObject2 = JsonObject(listOf(NUMERO2, NOME2,INTERNACIONAL2),2)
+    val jsonObject3 = JsonObject(listOf(NUMERO3, NOME3,INTERNACIONAL3),2)
+    val inscritosList = JsonList(listOf(jsonObject,jsonObject2,jsonObject3),1)
 
-    val innerObj = JsonObject(listOf(jsonStringAttribute1, jsonNumberAttribute1, jsonBoolAttribute1), 1)
-    val innerObjAttribute = JsonKeyValuePair("inner-object", innerObj)
-
-    val jsonString3 = JsonString("attr-one", 3)
-    val jsonNumber3 = JsonNumber(12278, 3)
-    val jsonBool3 = JsonBoolean(false, 3)
-
-    val jsonStringAttribute3 = JsonKeyValuePair("json-string", jsonString3)
-    val jsonNumberAttribute3 = JsonKeyValuePair("json-number", jsonNumber3)
-    val jsonBoolAttribute3 = JsonKeyValuePair("json-boolean", jsonBool3)
-
-    val innerObj2 = JsonObject(listOf(jsonStringAttribute3, jsonNumberAttribute3, jsonBoolAttribute3), 2)
-    val innerObjAttribute2 = JsonKeyValuePair("inner-object", innerObj2)
-
-    val jsonList = JsonList(
-        listOf(
-            jsonString1,
-            jsonNumber1,
-            jsonBool1,
-            innerObjAttribute2
-        ), 1
-    )
-    val jsonListAttribute = JsonKeyValuePair("json-list", jsonList)
-
-    val obj = JsonObject(
-        listOf(
-            jsonStringAttribute,
-            jsonNumberAttribute,
-            jsonBoolAttribute,
-            jsonListAttribute,
-            innerObjAttribute
-        )
-    )
+    val uc = JsonKeyValuePair("uc", UC)
+    val ects = JsonKeyValuePair("ects", ECTS)
+    val data_exame = JsonKeyValuePair("data-exame", DATA_EXAME)
+    val inscritos = JsonKeyValuePair("inscritos", inscritosList)
+    val obj = JsonObject(listOf(uc,ects,data_exame,inscritos))
 
     print(obj)
+    val list = listOf("nome", "numero")
+
+    val visitor = ValueFinderVisitor("nome")
+    obj.accept(visitor)
+    val visitorResult = visitor.getValues()
+    println(visitorResult)
+
+
+    /*
+
+
+val objectVisitor = ObjectVisitor(list)
+    obj.accept(objectVisitor)
+    val objectVisitorResult = objectVisitor.getObjects()
+    println(objectVisitorResult)
+
+
+            val numberValidatorVisitor = NumberValidationVisitor()
+            obj.accept(numberValidatorVisitor)
+            val numberVisitorResult = numberValidatorVisitor.isValid
+            println("isValid = $numberVisitorResult")
+
+            val inscritosValidationVisitor = InscritosValidationVisitor()
+            obj.accept(inscritosValidationVisitor)
+            val inscritosVisitorResult = inscritosValidationVisitor.isValid
+            println("isValid = $inscritosVisitorResult")
+
+    */
 
 }

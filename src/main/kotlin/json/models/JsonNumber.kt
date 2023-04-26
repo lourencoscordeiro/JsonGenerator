@@ -1,5 +1,7 @@
 package json.models
 
+import json.visitors.interfaces.Visitor
+
 /**
  * Representation of a Number in JSON.
  */
@@ -9,4 +11,7 @@ data class JsonNumber(val value: Number, override val depth: Int = 0) : JsonElem
 
     override fun toString(): String = toPrettyJsonString()
 
+    override fun accept(visitor: Visitor) {
+        visitor.visit(this)
+    }
 }

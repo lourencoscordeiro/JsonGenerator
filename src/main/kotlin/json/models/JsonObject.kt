@@ -1,5 +1,7 @@
 package json.models
 
+import json.visitors.interfaces.Visitor
+
 /**
  * Representation of an Object in JSON. Consists on a map of its attributes (name and JSON Element).
  */
@@ -12,5 +14,12 @@ data class JsonObject(val attributes: List<JsonKeyValuePair> = listOf(), overrid
     override fun toString(): String = toPrettyJsonString()
 
     private fun createIndentation(indentationRatio: Int = depth): String = "\t".repeat(indentationRatio)
+    override fun accept(visitor: Visitor) {
+        visitor.visit(this)
+        attributes.forEach{
+            it.accept(visitor)
+        }
+    }
 
+    fun getAttributes()=attributes
 }
