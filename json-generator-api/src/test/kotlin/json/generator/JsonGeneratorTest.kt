@@ -7,7 +7,7 @@ import SimpleTestDataClassWithRenamedProperty
 import TestEnum
 import json.generator.mapping.TypeMapping
 import json.models.*
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
