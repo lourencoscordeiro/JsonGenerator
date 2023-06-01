@@ -12,11 +12,7 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation(kotlin("test"))
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-}
+dependencies {}
 
 tasks.test {
     useJUnitPlatform()
