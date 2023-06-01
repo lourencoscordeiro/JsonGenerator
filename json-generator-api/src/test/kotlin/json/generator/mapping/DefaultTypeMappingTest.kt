@@ -1,7 +1,7 @@
 package json.generator.mapping
 
 import json.models.*
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import kotlin.test.assertEquals
 
 internal class DefaultTypeMappingTest {

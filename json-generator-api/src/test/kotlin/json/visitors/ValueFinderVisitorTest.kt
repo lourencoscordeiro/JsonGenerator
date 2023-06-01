@@ -5,7 +5,7 @@ import json.models.JsonNumber
 import json.models.JsonObject
 import json.models.JsonString
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 internal class ValueFinderVisitorTest {
 
