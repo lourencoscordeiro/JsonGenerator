@@ -12,7 +12,7 @@ internal class JsonListTest {
         val jsonNumber3 = JsonNumber(103, 1)
         val listOfJsonNumbers = listOf(jsonNumber1, jsonNumber2, jsonNumber3)
 
-        val jsonList = JsonList(listOfJsonNumbers, 0)
+        val jsonList = JsonArray(listOfJsonNumbers, 0)
 
         assertEquals(0, jsonList.depth)
         assertEquals(listOfJsonNumbers, jsonList.elements)

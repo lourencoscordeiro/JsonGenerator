@@ -41,7 +41,7 @@ internal class JsonObjectTest {
         val innerObj2 = JsonObject(listOf(jsonStringAttribute3, jsonNumberAttribute3, jsonBoolAttribute3), 2)
         val innerObjAttribute2 = JsonKeyValuePair("inner-object", innerObj2)
 
-        val jsonList = JsonList(
+        val jsonList = JsonArray(
             listOf(
                 jsonString1,
                 jsonNumber1,

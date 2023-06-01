@@ -1,13 +1,12 @@
 package json.visitors
 
-import json.models.JsonKeyValuePair
-import json.models.JsonList
+import json.models.JsonArray
 import json.models.JsonObject
 
 /**
  * Validate whether all elements in a JSON list/array have the same structure or not.
  *
- * Only implements visitation for [JsonList] because it is the only relevant
+ * Only implements visitation for [JsonArray] because it is the only relevant
  * JSON element where list elements can be compared.
  */
 class SameStructureArrayValidationVisitor : Visitor {
@@ -21,9 +20,9 @@ class SameStructureArrayValidationVisitor : Visitor {
     fun isValid(): Boolean = isValid
 
     /**
-     * Visits a [JsonList] and performs the Visitor's job.
+     * Visits a [JsonArray] and performs the Visitor's job.
      */
-    override fun visit(list: JsonList) {
+    override fun visit(list: JsonArray) {
 
         if (list.elements.all { it is JsonObject }) isValid =
             list.elements.map { it as JsonObject }

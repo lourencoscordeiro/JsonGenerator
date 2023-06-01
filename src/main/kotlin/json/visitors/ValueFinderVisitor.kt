@@ -2,7 +2,6 @@ package json.visitors
 
 import json.models.JsonElement
 import json.models.JsonKeyValuePair
-import json.models.JsonList
 
 /**
  * Given a property it finds all the values in the JSON tree stored with that property name.

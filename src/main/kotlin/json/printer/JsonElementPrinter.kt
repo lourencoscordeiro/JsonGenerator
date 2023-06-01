@@ -1,6 +1,5 @@
 package json.printer
 
-import json.generator.mapping.TypeMapping
 import json.models.JsonElement
 
 /**

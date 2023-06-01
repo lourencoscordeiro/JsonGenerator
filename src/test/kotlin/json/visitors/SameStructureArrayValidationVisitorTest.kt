@@ -8,7 +8,7 @@ internal class SameStructureArrayValidationVisitorTest {
 
     @Test
     fun `different structure array - example 1`() {
-        val differentStructureArrayExample1 = JsonList(listOf(
+        val differentStructureArrayExample1 = JsonArray(listOf(
             JsonObject(listOf(
                 JsonKeyValuePair("some-text", JsonString("some-text-value", 2)),
                 JsonKeyValuePair("some-int", JsonNumber(101, 2))
@@ -27,7 +27,7 @@ internal class SameStructureArrayValidationVisitorTest {
 
     @Test
     fun `same structure array - example 1`() {
-        val sameStructureArrayExample1 = JsonList(listOf(
+        val sameStructureArrayExample1 = JsonArray(listOf(
             JsonObject(listOf(
                 JsonKeyValuePair("some-text", JsonString("some-text-value", 2)),
                 JsonKeyValuePair("some-int", JsonNumber(101, 2))
@@ -46,7 +46,7 @@ internal class SameStructureArrayValidationVisitorTest {
 
     @Test
     fun `different structure array - example 2`() {
-        val differentStructureArrayExample2 = JsonList(listOf(
+        val differentStructureArrayExample2 = JsonArray(listOf(
             JsonNumber(1, 1),
             JsonString("1", 1),
             JsonNumber(1, 1),
@@ -60,7 +60,7 @@ internal class SameStructureArrayValidationVisitorTest {
 
     @Test
     fun `same structure array - example 2`() {
-        val sameStructureArrayExample2 = JsonList(listOf(
+        val sameStructureArrayExample2 = JsonArray(listOf(
             JsonNumber(1, 1),
             JsonNumber(2, 1),
             JsonNumber(3, 1),

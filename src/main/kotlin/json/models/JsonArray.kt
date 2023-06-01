@@ -5,7 +5,7 @@ import json.visitors.Visitor
 /**
  * Representation of a List in JSON.
  */
-data class JsonList(val elements: List<JsonElement>, override val depth: Int = 0) : JsonElement {
+data class JsonArray(val elements: List<JsonElement>, override val depth: Int = 0) : JsonElement {
 
     override fun accept(visitor: Visitor) {
         visitor.visit(this)

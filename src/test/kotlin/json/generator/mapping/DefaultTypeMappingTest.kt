@@ -51,8 +51,8 @@ internal class DefaultTypeMappingTest {
         val listOfJsonElements = listOf(jsonString1, jsonString2)
         val depth = 1
 
-        val simpleJsonList = JsonList(listOfJsonElements)
-        val jsonListWithDepth = JsonList(listOfJsonElements, depth)
+        val simpleJsonList = JsonArray(listOfJsonElements)
+        val jsonListWithDepth = JsonArray(listOfJsonElements, depth)
 
         assertEquals(simpleJsonList, toTest.convertList(listOfJsonElements, 0))
         assertEquals(jsonListWithDepth, toTest.convertList(listOfJsonElements, depth))

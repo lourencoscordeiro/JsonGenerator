@@ -10,7 +10,7 @@ interface Visitor {
     /**
      * Visits a JSON list element.
      */
-    fun visit(list: JsonList) {}
+    fun visit(list: JsonArray) {}
 
     /**
      * Visits a JSON number element.

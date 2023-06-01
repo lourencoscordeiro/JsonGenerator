@@ -150,7 +150,7 @@ internal class JsonGeneratorTest {
         val jsonNumber4 = JsonNumber(4, 1)
         val listOfJsonNumber = listOf(jsonNumber1, jsonNumber2, jsonNumber3, jsonNumber4)
 
-        val expected = JsonList(listOfJsonNumber)
+        val expected = JsonArray(listOfJsonNumber)
 
         whenever(typeMappingMock.convertNumber(1, 1)).thenReturn(jsonNumber1)
         whenever(typeMappingMock.convertNumber(2, 1)).thenReturn(jsonNumber2)
@@ -174,7 +174,7 @@ internal class JsonGeneratorTest {
         val jsonNumber4 = JsonNumber(4, 1)
         val listOfJsonNumber = listOf(jsonNumber1, jsonNumber2, jsonNumber3, jsonNumber4)
 
-        val expected = JsonList(listOfJsonNumber)
+        val expected = JsonArray(listOfJsonNumber)
 
         whenever(typeMappingMock.convertNumber(1, 1)).thenReturn(jsonNumber1)
         whenever(typeMappingMock.convertNumber(2, 1)).thenReturn(jsonNumber2)
@@ -198,7 +198,7 @@ internal class JsonGeneratorTest {
         val jsonNumber4 = JsonNumber(4, 1)
         val listOfJsonNumber = listOf(jsonNumber1, jsonNumber2, jsonNumber3, jsonNumber4)
 
-        val expected = JsonList(listOfJsonNumber)
+        val expected = JsonArray(listOfJsonNumber)
 
         whenever(typeMappingMock.convertNumber(1, 1)).thenReturn(jsonNumber1)
         whenever(typeMappingMock.convertNumber(2, 1)).thenReturn(jsonNumber2)

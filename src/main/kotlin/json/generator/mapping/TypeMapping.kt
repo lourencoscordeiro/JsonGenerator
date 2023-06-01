@@ -29,11 +29,11 @@ interface TypeMapping {
     fun convertBoolean(boolean: Boolean, depth: Int): JsonBoolean
 
     /**
-     * Converts a Kotlin [List] into a [JsonList].
+     * Converts a Kotlin [List] into a [JsonArray].
      *
      * @param list original Kotlin List.
      */
-    fun convertList(list: List<JsonElement>, depth: Int): JsonList
+    fun convertList(list: List<JsonElement>, depth: Int): JsonArray
 
     /**
      * Converts a Data Class data into a [JsonObject]
