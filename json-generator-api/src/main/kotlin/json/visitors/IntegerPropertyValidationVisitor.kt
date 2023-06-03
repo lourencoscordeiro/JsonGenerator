@@ -9,7 +9,6 @@ import json.models.JsonNumber
  * Only implements visitation for [JsonKeyValuePair] because it is the only JSON Element that represents
  * a property with a name and value.
  */
-// TODO: vale a pena generalizar ainda mais?
 data class IntegerPropertyValidationVisitor(val propertyName: String) : Visitor {
 
     private var isValid = true

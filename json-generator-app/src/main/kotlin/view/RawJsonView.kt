@@ -20,7 +20,7 @@ class RawJsonView(private val jsonElement: JsonElement) : JLabel() {
         jsonElement.addObserver(object : JsonElementObserver {
 
             override fun addedElement(newValue: JsonElement) {
-                srcArea.text = jsonElement.toPrettyJsonString()
+                srcArea.text = jsonElement.toPrettyJsonString(0)
             }
 
         })

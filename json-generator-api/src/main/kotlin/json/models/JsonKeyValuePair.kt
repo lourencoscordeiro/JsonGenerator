@@ -15,10 +15,8 @@ data class JsonKeyValuePair(val name: String, val value: JsonElement) : JsonElem
         value.accept(visitor)
     }
 
-    override val depth: Int = value.depth
+    override fun toPrettyJsonString(depth: Int): String = "${createIndentation(depth)}\"$name\": ${value.toPrettyJsonString(depth)}"
 
-    override fun toPrettyJsonString(): String = "\"$name\": $value"
-
-    override fun toString(): String = toPrettyJsonString()
+    private fun createIndentation(indentationRatio: Int): String = "\t".repeat(indentationRatio)
 
 }

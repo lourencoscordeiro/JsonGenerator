@@ -10,12 +10,6 @@ import json.visitors.Visitor
 interface JsonElement : JsonElementObservable {
 
     /**
-     * Represents the depth of the element inside the JSON
-     * tree. Depth values starts at 0 (root JSON node).
-     */
-    val depth: Int
-
-    /**
      * Entry point for an update on a Json Element.
      */
     fun addElement(newValue: JsonElement): JsonElement {
@@ -31,7 +25,7 @@ interface JsonElement : JsonElementObservable {
     /**
      * Converts element to a formatted JSON string.
      */
-    fun toPrettyJsonString(): String
+    fun toPrettyJsonString(depth: Int): String
 
     /**
      * Prints the element.

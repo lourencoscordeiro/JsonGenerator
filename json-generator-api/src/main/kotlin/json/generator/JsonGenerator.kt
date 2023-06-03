@@ -16,35 +16,35 @@ import kotlin.reflect.full.findAnnotations
  */
 data class JsonGenerator(val typeMapping: TypeMapping = TypeMapping.default()) {
 
-    fun toJsonElement(value: Any?, depth: Int = 0): JsonElement {
+    fun toJsonElement(value: Any?): JsonElement {
 
         return when (value) {
 
-            is String -> typeMapping.convertString(value, depth)
-            is Enum<*> -> typeMapping.convertString(value.toString(), depth)
-            is Boolean -> typeMapping.convertBoolean(value, depth)
-            is Char -> typeMapping.convertString(value.toString(), depth)
+            is String -> typeMapping.convertString(value)
+            is Enum<*> -> typeMapping.convertString(value.toString())
+            is Boolean -> typeMapping.convertBoolean(value)
+            is Char -> typeMapping.convertString(value.toString())
 
             is Byte, is Short, is Int, is Long, is Float, is Double ->
-                typeMapping.convertNumber(value as Number, depth)
+                typeMapping.convertNumber(value as Number)
 
-            is List<*>, is Set<*> -> mapList(value as Collection<*>, depth)
-            is Array<*> -> mapList((value.toCollection(ArrayList())), depth)
+            is List<*>, is Set<*> -> mapList(value as Collection<*>)
+            is Array<*> -> mapList((value.toCollection(ArrayList())))
 
-            is Pair<*, *> -> JsonKeyValuePair(value.first as String, toJsonElement(value.second, depth))
+            is Pair<*, *> -> JsonKeyValuePair(value.first as String, toJsonElement(value.second))
             is Map<*, *> -> typeMapping.convertObject(value.map { (key, value) ->
-                key.toString() to toJsonElement(value, depth + 1) }.toMap(), depth)
+                key.toString() to toJsonElement(value) }.toMap())
 
             else -> {
-                if (value == null) return typeMapping.createNullNode(depth)
-                return mapUnknownObject(value, depth)
+                if (value == null) return typeMapping.createNullNode()
+                return mapUnknownObject(value)
             }
         }
     }
 
     @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
     @OptIn(ExperimentalStdlibApi::class)
-    private fun mapUnknownObject(value: Any, depth: Int): JsonObject {
+    private fun mapUnknownObject(value: Any): JsonObject {
         return typeMapping.convertObject(
             value::class.dataClassFields
                 .filter { it.findAnnotations<JsonExclude>().isEmpty() }
@@ -55,13 +55,12 @@ data class JsonGenerator(val typeMapping: TypeMapping = TypeMapping.default()) {
                     val propertyValue =
                         if (it.findAnnotations<AsJsonString>().isEmpty()) it.call(value) else it.call(value)
                             .toString()
-                    propertyName to toJsonElement(propertyValue, depth + 1)
-                }, depth
-        )
+                    propertyName to toJsonElement(propertyValue)
+                })
     }
 
-    private fun mapList(list: Collection<*>, depth: Int): JsonArray {
-        return typeMapping.convertList(list.map { toJsonElement(it, depth + 1) }, depth)
+    private fun mapList(list: Collection<*>): JsonArray {
+        return typeMapping.convertList(list.map { toJsonElement(it) })
     }
 
 }
