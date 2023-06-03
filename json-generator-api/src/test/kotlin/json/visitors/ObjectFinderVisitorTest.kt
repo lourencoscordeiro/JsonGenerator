@@ -12,9 +12,9 @@ internal class ObjectFinderVisitorTest {
     @Test
     fun `object with correct property names`() {
         val obj = JsonObject(listOf(
-            JsonKeyValuePair("property-one", JsonString("some-text-value", 1)),
-            JsonKeyValuePair("property-two", JsonNumber(101, 1)),
-            JsonKeyValuePair("property-three", JsonNumber(101, 1)),
+            JsonKeyValuePair("property-one", JsonString("some-text-value")),
+            JsonKeyValuePair("property-two", JsonNumber(101)),
+            JsonKeyValuePair("property-three", JsonNumber(101)),
         ))
 
         val visitor = ObjectFinderVisitor(listOf("property-one", "property-two"))
@@ -29,9 +29,9 @@ internal class ObjectFinderVisitorTest {
     @Test
     fun `object with wrong property names`() {
         val obj = JsonObject(listOf(
-            JsonKeyValuePair("property-one", JsonString("some-text-value", 1)),
-            JsonKeyValuePair("property-two", JsonNumber(101, 1)),
-            JsonKeyValuePair("property-three", JsonNumber(101, 1)),
+            JsonKeyValuePair("property-one", JsonString("some-text-value")),
+            JsonKeyValuePair("property-two", JsonNumber(101)),
+            JsonKeyValuePair("property-three", JsonNumber(101)),
         ))
 
         val visitor = ObjectFinderVisitor(listOf("property-one", "property-four"))

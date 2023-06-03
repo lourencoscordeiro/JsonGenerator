@@ -12,8 +12,8 @@ internal class ValueFinderVisitorTest {
     @Test
     fun `object with correct property name`() {
         val obj = JsonObject(listOf(
-            JsonKeyValuePair("property-one", JsonString("some-text-value", 1)),
-            JsonKeyValuePair("property-two", JsonNumber(101, 1))))
+            JsonKeyValuePair("property-one", JsonString("some-text-value")),
+            JsonKeyValuePair("property-two", JsonNumber(101))))
 
         val visitor = ValueFinderVisitor("property-one")
         obj.accept(visitor)
@@ -21,14 +21,14 @@ internal class ValueFinderVisitorTest {
         val result = visitor.getValues()
 
         assertTrue(result.isNotEmpty())
-        assertEquals(JsonString("some-text-value", 1), result[0])
+        assertEquals(JsonString("some-text-value"), result[0])
     }
 
     @Test
     fun `object with wrong property name`() {
         val obj = JsonObject(listOf(
-            JsonKeyValuePair("property-one-wrong", JsonString("some-text-value", 1)),
-            JsonKeyValuePair("property-two", JsonNumber(101, 1))))
+            JsonKeyValuePair("property-one-wrong", JsonString("some-text-value")),
+            JsonKeyValuePair("property-two", JsonNumber(101))))
 
         val visitor = ValueFinderVisitor("property-one")
         obj.accept(visitor)

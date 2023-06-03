@@ -6,7 +6,7 @@ import json.visitors.Visitor
 /**
  * Representation of a String in JSON.
  */
-data class JsonString(val value: String, override val depth: Int = 0) : JsonElement {
+data class JsonString(val value: String) : JsonElement {
 
     override val observers: MutableList<JsonElementObserver> = mutableListOf()
 
@@ -14,7 +14,6 @@ data class JsonString(val value: String, override val depth: Int = 0) : JsonElem
         visitor.visit(this)
     }
 
-    override fun toPrettyJsonString(): String = "\"$value\""
+    override fun toPrettyJsonString(depth: Int): String = "\"$value\""
 
-    override fun toString(): String = toPrettyJsonString()
 }

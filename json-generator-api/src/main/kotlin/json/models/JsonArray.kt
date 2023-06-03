@@ -6,7 +6,13 @@ import json.visitors.Visitor
 /**
  * Representation of a List in JSON.
  */
-data class JsonArray(val elements: List<JsonElement>, override val depth: Int = 0) : JsonElement {
+data class JsonArray(val elements: List<JsonElement>) : JsonElement {
+
+    init {
+        if (elements.any { it is JsonObject || it is JsonArray }) {
+            throw IllegalArgumentException("Array cannot contain an object or an array.")
+        }
+    }
 
     override val observers: MutableList<JsonElementObserver> = mutableListOf()
 
@@ -15,14 +21,12 @@ data class JsonArray(val elements: List<JsonElement>, override val depth: Int = 
         elements.forEach{ it.accept(visitor)}
     }
 
-    override fun toPrettyJsonString(): String = elements.joinToString(
+    override fun toPrettyJsonString(depth: Int): String = elements.joinToString(
         ",\n ",
         "[\n",
-        "\n${createIndentation()}]"
-    ) { createIndentation(it.depth) + it.toPrettyJsonString() }
+        "\n${createIndentation(depth)}]"
+    ) { "${createIndentation(depth)}${it.toPrettyJsonString(depth)}" }
 
-    override fun toString(): String = toPrettyJsonString()
-
-    private fun createIndentation(indentationRatio: Int = depth): String = "\t".repeat(indentationRatio)
+    private fun createIndentation(indentationRatio: Int): String = "\t".repeat(indentationRatio)
 
 }

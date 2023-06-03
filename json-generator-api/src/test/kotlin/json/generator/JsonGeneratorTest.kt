@@ -22,11 +22,11 @@ internal class JsonGeneratorTest {
     fun `maps byte correctly`() {
         val byte: Byte = 101
         val expected = JsonNumber(byte)
-        whenever(typeMappingMock.convertNumber(byte, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(byte)).thenReturn(expected)
 
         val result = toTest.toJsonElement(byte)
 
-        verify(typeMappingMock).convertNumber(byte as Number, 0)
+        verify(typeMappingMock).convertNumber(byte as Number)
         assertEquals(expected, result)
     }
 
@@ -34,11 +34,11 @@ internal class JsonGeneratorTest {
     fun `maps int correctly`() {
         val int = 101
         val expected = JsonNumber(int)
-        whenever(typeMappingMock.convertNumber(int, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(int)).thenReturn(expected)
 
         val result = toTest.toJsonElement(int)
 
-        verify(typeMappingMock).convertNumber(int as Number, 0)
+        verify(typeMappingMock).convertNumber(int as Number)
         assertEquals(expected, result)
     }
 
@@ -46,11 +46,11 @@ internal class JsonGeneratorTest {
     fun `maps short correctly`() {
         val short = "101".toShort()
         val expected = JsonNumber(short)
-        whenever(typeMappingMock.convertNumber(short, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(short)).thenReturn(expected)
 
         val result = toTest.toJsonElement(short)
 
-        verify(typeMappingMock).convertNumber(short as Number, 0)
+        verify(typeMappingMock).convertNumber(short as Number)
         assertEquals(expected, result)
     }
 
@@ -58,11 +58,11 @@ internal class JsonGeneratorTest {
     fun `maps long correctly`() {
         val long = 101L
         val expected = JsonNumber(long)
-        whenever(typeMappingMock.convertNumber(long, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(long)).thenReturn(expected)
 
         val result = toTest.toJsonElement(long)
 
-        verify(typeMappingMock).convertNumber(long as Number, 0)
+        verify(typeMappingMock).convertNumber(long as Number)
         assertEquals(expected, result)
     }
 
@@ -70,11 +70,11 @@ internal class JsonGeneratorTest {
     fun `maps float correctly`() {
         val float = 101f
         val expected = JsonNumber(float)
-        whenever(typeMappingMock.convertNumber(float, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(float)).thenReturn(expected)
 
         val result = toTest.toJsonElement(float)
 
-        verify(typeMappingMock).convertNumber(float as Number, 0)
+        verify(typeMappingMock).convertNumber(float as Number)
         assertEquals(expected, result)
     }
 
@@ -82,11 +82,11 @@ internal class JsonGeneratorTest {
     fun `maps double correctly`() {
         val double = 101.0
         val expected = JsonNumber(double)
-        whenever(typeMappingMock.convertNumber(double, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(double)).thenReturn(expected)
 
         val result = toTest.toJsonElement(double)
 
-        verify(typeMappingMock).convertNumber(double as Number, 0)
+        verify(typeMappingMock).convertNumber(double as Number)
         assertEquals(expected, result)
     }
 
@@ -94,11 +94,11 @@ internal class JsonGeneratorTest {
     fun `maps string correctly`() {
         val string = "some text"
         val expected = JsonString(string)
-        whenever(typeMappingMock.convertString(string, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertString(string)).thenReturn(expected)
 
         val result = toTest.toJsonElement(string)
 
-        verify(typeMappingMock).convertString(string, 0)
+        verify(typeMappingMock).convertString(string)
         assertEquals(expected, result)
     }
 
@@ -108,11 +108,11 @@ internal class JsonGeneratorTest {
         val enumTextValue: String = enum.toString()
         val expected = JsonString(enumTextValue)
 
-        whenever(typeMappingMock.convertString(enumTextValue, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertString(enumTextValue)).thenReturn(expected)
 
         val result = toTest.toJsonElement(enum)
 
-        verify(typeMappingMock).convertString(enumTextValue, 0)
+        verify(typeMappingMock).convertString(enumTextValue)
         assertEquals(expected, result)
     }
 
@@ -120,11 +120,11 @@ internal class JsonGeneratorTest {
     fun `maps boolean correctly`() {
         val boolean = true
         val expected = JsonBoolean(boolean)
-        whenever(typeMappingMock.convertBoolean(boolean, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertBoolean(boolean)).thenReturn(expected)
 
         val result = toTest.toJsonElement(boolean)
 
-        verify(typeMappingMock).convertBoolean(boolean, 0)
+        verify(typeMappingMock).convertBoolean(boolean)
         assertEquals(expected, result)
     }
 
@@ -132,11 +132,11 @@ internal class JsonGeneratorTest {
     fun `maps char correctly`() {
         val char: Char = 'a'
         val expected = JsonString(char.toString())
-        whenever(typeMappingMock.convertString(char.toString(), 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertString(char.toString())).thenReturn(expected)
 
         val result = toTest.toJsonElement(char)
 
-        verify(typeMappingMock).convertString(char.toString(), 0)
+        verify(typeMappingMock).convertString(char.toString())
         assertEquals(expected, result)
     }
 
@@ -144,23 +144,23 @@ internal class JsonGeneratorTest {
     fun `maps list correctly`() {
         val list = listOf(1, 2, 3, 4)
 
-        val jsonNumber1 = JsonNumber(1, 1)
-        val jsonNumber2 = JsonNumber(2, 1)
-        val jsonNumber3 = JsonNumber(3, 1)
-        val jsonNumber4 = JsonNumber(4, 1)
+        val jsonNumber1 = JsonNumber(1)
+        val jsonNumber2 = JsonNumber(2)
+        val jsonNumber3 = JsonNumber(3)
+        val jsonNumber4 = JsonNumber(4)
         val listOfJsonNumber = listOf(jsonNumber1, jsonNumber2, jsonNumber3, jsonNumber4)
 
         val expected = JsonArray(listOfJsonNumber)
 
-        whenever(typeMappingMock.convertNumber(1, 1)).thenReturn(jsonNumber1)
-        whenever(typeMappingMock.convertNumber(2, 1)).thenReturn(jsonNumber2)
-        whenever(typeMappingMock.convertNumber(3, 1)).thenReturn(jsonNumber3)
-        whenever(typeMappingMock.convertNumber(4, 1)).thenReturn(jsonNumber4)
-        whenever(typeMappingMock.convertList(listOfJsonNumber, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(1)).thenReturn(jsonNumber1)
+        whenever(typeMappingMock.convertNumber(2)).thenReturn(jsonNumber2)
+        whenever(typeMappingMock.convertNumber(3)).thenReturn(jsonNumber3)
+        whenever(typeMappingMock.convertNumber(4)).thenReturn(jsonNumber4)
+        whenever(typeMappingMock.convertList(listOfJsonNumber)).thenReturn(expected)
 
         val result = toTest.toJsonElement(list)
 
-        verify(typeMappingMock).convertList(listOfJsonNumber, 0)
+        verify(typeMappingMock).convertList(listOfJsonNumber)
         assertEquals(expected, result)
     }
 
@@ -168,23 +168,23 @@ internal class JsonGeneratorTest {
     fun `maps set correctly`() {
         val set = setOf(1, 2, 3, 4)
 
-        val jsonNumber1 = JsonNumber(1, 1)
-        val jsonNumber2 = JsonNumber(2, 1)
-        val jsonNumber3 = JsonNumber(3, 1)
-        val jsonNumber4 = JsonNumber(4, 1)
+        val jsonNumber1 = JsonNumber(1)
+        val jsonNumber2 = JsonNumber(2)
+        val jsonNumber3 = JsonNumber(3)
+        val jsonNumber4 = JsonNumber(4)
         val listOfJsonNumber = listOf(jsonNumber1, jsonNumber2, jsonNumber3, jsonNumber4)
 
         val expected = JsonArray(listOfJsonNumber)
 
-        whenever(typeMappingMock.convertNumber(1, 1)).thenReturn(jsonNumber1)
-        whenever(typeMappingMock.convertNumber(2, 1)).thenReturn(jsonNumber2)
-        whenever(typeMappingMock.convertNumber(3, 1)).thenReturn(jsonNumber3)
-        whenever(typeMappingMock.convertNumber(4, 1)).thenReturn(jsonNumber4)
-        whenever(typeMappingMock.convertList(listOfJsonNumber, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(1)).thenReturn(jsonNumber1)
+        whenever(typeMappingMock.convertNumber(2)).thenReturn(jsonNumber2)
+        whenever(typeMappingMock.convertNumber(3)).thenReturn(jsonNumber3)
+        whenever(typeMappingMock.convertNumber(4)).thenReturn(jsonNumber4)
+        whenever(typeMappingMock.convertList(listOfJsonNumber)).thenReturn(expected)
 
         val result = toTest.toJsonElement(set)
 
-        verify(typeMappingMock).convertList(listOfJsonNumber, 0)
+        verify(typeMappingMock).convertList(listOfJsonNumber)
         assertEquals(expected, result)
     }
 
@@ -192,26 +192,24 @@ internal class JsonGeneratorTest {
     fun `maps array correctly`() {
         val set = arrayOf(1, 2, 3, 4)
 
-        val jsonNumber1 = JsonNumber(1, 1)
-        val jsonNumber2 = JsonNumber(2, 1)
-        val jsonNumber3 = JsonNumber(3, 1)
-        val jsonNumber4 = JsonNumber(4, 1)
+        val jsonNumber1 = JsonNumber(1)
+        val jsonNumber2 = JsonNumber(2)
+        val jsonNumber3 = JsonNumber(3)
+        val jsonNumber4 = JsonNumber(4)
         val listOfJsonNumber = listOf(jsonNumber1, jsonNumber2, jsonNumber3, jsonNumber4)
 
         val expected = JsonArray(listOfJsonNumber)
 
-        whenever(typeMappingMock.convertNumber(1, 1)).thenReturn(jsonNumber1)
-        whenever(typeMappingMock.convertNumber(2, 1)).thenReturn(jsonNumber2)
-        whenever(typeMappingMock.convertNumber(3, 1)).thenReturn(jsonNumber3)
-        whenever(typeMappingMock.convertNumber(4, 1)).thenReturn(jsonNumber4)
-        whenever(typeMappingMock.convertList(listOfJsonNumber, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(1)).thenReturn(jsonNumber1)
+        whenever(typeMappingMock.convertNumber(2)).thenReturn(jsonNumber2)
+        whenever(typeMappingMock.convertNumber(3)).thenReturn(jsonNumber3)
+        whenever(typeMappingMock.convertNumber(4)).thenReturn(jsonNumber4)
+        whenever(typeMappingMock.convertList(listOfJsonNumber)).thenReturn(expected)
 
         val result = toTest.toJsonElement(set)
 
-        verify(typeMappingMock).convertList(listOfJsonNumber, 0)
+        verify(typeMappingMock).convertList(listOfJsonNumber)
         assertEquals(expected, result)
-
-        println(result.toPrettyJsonString())
     }
 
     @Test
@@ -220,8 +218,8 @@ internal class JsonGeneratorTest {
             "property1" to "value1",
             "property2" to "value2")
 
-        val jsonStringP1 = JsonString("value1", 1)
-        val jsonStringP2 = JsonString("value2", 1)
+        val jsonStringP1 = JsonString("value1")
+        val jsonStringP2 = JsonString("value2")
 
         val mapOfStringToJsonElement = mapOf(
             "property1" to jsonStringP1,
@@ -231,13 +229,13 @@ internal class JsonGeneratorTest {
             JsonKeyValuePair("property1", jsonStringP1),
             JsonKeyValuePair("property2", jsonStringP2)))
 
-        whenever(typeMappingMock.convertString("value1", 1)).thenReturn(jsonStringP1)
-        whenever(typeMappingMock.convertString("value2", 1)).thenReturn(jsonStringP2)
-        whenever(typeMappingMock.convertObject(mapOfStringToJsonElement, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertString("value1")).thenReturn(jsonStringP1)
+        whenever(typeMappingMock.convertString("value2")).thenReturn(jsonStringP2)
+        whenever(typeMappingMock.convertObject(mapOfStringToJsonElement)).thenReturn(expected)
 
         val result = toTest.toJsonElement(map)
 
-        verify(typeMappingMock).convertObject(mapOfStringToJsonElement, 0)
+        verify(typeMappingMock).convertObject(mapOfStringToJsonElement)
         assertEquals(expected, result)
     }
 
@@ -249,8 +247,8 @@ internal class JsonGeneratorTest {
             simpleTestDataClass1 to "value1",
             simpleTestDataClass2 to "value2")
 
-        val jsonStringP1 = JsonString("value1", 1)
-        val jsonStringP2 = JsonString("value2", 1)
+        val jsonStringP1 = JsonString("value1")
+        val jsonStringP2 = JsonString("value2")
 
         val mapOfStringToJsonElement = mapOf(
             simpleTestDataClass1.toString() to jsonStringP1,
@@ -260,13 +258,13 @@ internal class JsonGeneratorTest {
             JsonKeyValuePair(simpleTestDataClass1.toString(), jsonStringP1),
             JsonKeyValuePair(simpleTestDataClass2.toString(), jsonStringP2)))
 
-        whenever(typeMappingMock.convertString("value1", 1)).thenReturn(jsonStringP1)
-        whenever(typeMappingMock.convertString("value2", 1)).thenReturn(jsonStringP2)
-        whenever(typeMappingMock.convertObject(mapOfStringToJsonElement, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertString("value1")).thenReturn(jsonStringP1)
+        whenever(typeMappingMock.convertString("value2")).thenReturn(jsonStringP2)
+        whenever(typeMappingMock.convertObject(mapOfStringToJsonElement)).thenReturn(expected)
 
         val result = toTest.toJsonElement(map)
 
-        verify(typeMappingMock).convertObject(mapOfStringToJsonElement, 0)
+        verify(typeMappingMock).convertObject(mapOfStringToJsonElement)
         assertEquals(expected, result)
     }
 
@@ -274,24 +272,24 @@ internal class JsonGeneratorTest {
     fun `maps object correctly`() {
         val simpleTestDataClass = SimpleTestDataClass(101, "some text", true)
         val objectDataMap = mapOf(
-            "number" to JsonNumber(101, 1),
-            "name" to JsonString("some text", 1),
-            "isInternational" to JsonBoolean(true, 1))
+            "number" to JsonNumber(101),
+            "name" to JsonString("some text"),
+            "isInternational" to JsonBoolean(true))
 
         val expected = JsonObject(
             listOf(
-                JsonKeyValuePair("number", JsonNumber(101, 1)),
-                JsonKeyValuePair("name", JsonString("some text", 1)),
-                JsonKeyValuePair("isInternational", JsonBoolean(true, 1))))
+                JsonKeyValuePair("number", JsonNumber(101)),
+                JsonKeyValuePair("name", JsonString("some text")),
+                JsonKeyValuePair("isInternational", JsonBoolean(true))))
 
-        whenever(typeMappingMock.convertNumber(101, 1)).thenReturn(JsonNumber(101, 1))
-        whenever(typeMappingMock.convertString("some text", 1)).thenReturn(JsonString("some text", 1))
-        whenever(typeMappingMock.convertBoolean(true, 1)).thenReturn(JsonBoolean(true, 1))
-        whenever(typeMappingMock.convertObject(objectDataMap, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(101)).thenReturn(JsonNumber(101))
+        whenever(typeMappingMock.convertString("some text")).thenReturn(JsonString("some text"))
+        whenever(typeMappingMock.convertBoolean(true)).thenReturn(JsonBoolean(true))
+        whenever(typeMappingMock.convertObject(objectDataMap)).thenReturn(expected)
 
         val result = toTest.toJsonElement(simpleTestDataClass)
 
-        verify(typeMappingMock).convertObject(objectDataMap, 0)
+        verify(typeMappingMock).convertObject(objectDataMap)
         assertEquals(expected, result)
     }
 
@@ -299,21 +297,21 @@ internal class JsonGeneratorTest {
     fun `maps object with JsonExclude correctly`() {
         val simpleTestDataClassWithJsonIgnore = SimpleTestDataClassWithJsonIgnore(101, "some text", true)
         val objectDataMap = mapOf(
-            "number" to JsonNumber(101, 1),
-            "name" to JsonString("some text", 1))
+            "number" to JsonNumber(101),
+            "name" to JsonString("some text"))
 
         val expected = JsonObject(
             listOf(
-                JsonKeyValuePair("number", JsonNumber(101, 1)),
-                JsonKeyValuePair("name", JsonString("some text", 1))))
+                JsonKeyValuePair("number", JsonNumber(101)),
+                JsonKeyValuePair("name", JsonString("some text"))))
 
-        whenever(typeMappingMock.convertNumber(101, 1)).thenReturn(JsonNumber(101, 1))
-        whenever(typeMappingMock.convertString("some text", 1)).thenReturn(JsonString("some text", 1))
-        whenever(typeMappingMock.convertObject(objectDataMap, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(101)).thenReturn(JsonNumber(101))
+        whenever(typeMappingMock.convertString("some text")).thenReturn(JsonString("some text"))
+        whenever(typeMappingMock.convertObject(objectDataMap)).thenReturn(expected)
 
         val result = toTest.toJsonElement(simpleTestDataClassWithJsonIgnore)
 
-        verify(typeMappingMock).convertObject(objectDataMap, 0)
+        verify(typeMappingMock).convertObject(objectDataMap)
         assertEquals(expected, result)
     }
 
@@ -321,24 +319,24 @@ internal class JsonGeneratorTest {
     fun `maps object correctly with AsJsonString`() {
         val simpleTestDataClass = SimpleTestDataClassWithAsJsonString(101, "some text", true)
         val objectDataMap = mapOf(
-            "number" to JsonNumber(101, 1),
-            "name" to JsonString("some text", 1),
-            "isInternational" to JsonString("true", 1))
+            "number" to JsonNumber(101),
+            "name" to JsonString("some text"),
+            "isInternational" to JsonString("true"))
 
         val expected = JsonObject(
             listOf(
-                JsonKeyValuePair("number", JsonNumber(101, 1)),
-                JsonKeyValuePair("name", JsonString("some text", 1)),
-                JsonKeyValuePair("isInternational", JsonString("true", 1))))
+                JsonKeyValuePair("number", JsonNumber(101)),
+                JsonKeyValuePair("name", JsonString("some text")),
+                JsonKeyValuePair("isInternational", JsonString("true"))))
 
-        whenever(typeMappingMock.convertNumber(101, 1)).thenReturn(JsonNumber(101, 1))
-        whenever(typeMappingMock.convertString("some text", 1)).thenReturn(JsonString("some text", 1))
-        whenever(typeMappingMock.convertString("true", 1)).thenReturn(JsonString("true", 1))
-        whenever(typeMappingMock.convertObject(objectDataMap, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(101)).thenReturn(JsonNumber(101))
+        whenever(typeMappingMock.convertString("some text")).thenReturn(JsonString("some text"))
+        whenever(typeMappingMock.convertString("true")).thenReturn(JsonString("true"))
+        whenever(typeMappingMock.convertObject(objectDataMap)).thenReturn(expected)
 
         val result = toTest.toJsonElement(simpleTestDataClass)
 
-        verify(typeMappingMock).convertObject(objectDataMap, 0)
+        verify(typeMappingMock).convertObject(objectDataMap)
         assertEquals(expected, result)
     }
 
@@ -346,24 +344,24 @@ internal class JsonGeneratorTest {
     fun `maps object correctly wth renamed json property`() {
         val simpleTestDataClassWithRenamedProperty = SimpleTestDataClassWithRenamedProperty(101, "some text", true)
         val objectDataMap = mapOf(
-            "number" to JsonNumber(101, 1),
-            "name" to JsonString("some text", 1),
-            "isForeigner" to JsonBoolean(true, 1))
+            "number" to JsonNumber(101),
+            "name" to JsonString("some text"),
+            "isForeigner" to JsonBoolean(true))
 
         val expected = JsonObject(
             listOf(
-                JsonKeyValuePair("number", JsonNumber(101, 1)),
-                JsonKeyValuePair("name", JsonString("some text", 1)),
-                JsonKeyValuePair("isForeigner", JsonBoolean(true, 1))))
+                JsonKeyValuePair("number", JsonNumber(101)),
+                JsonKeyValuePair("name", JsonString("some text")),
+                JsonKeyValuePair("isForeigner", JsonBoolean(true))))
 
-        whenever(typeMappingMock.convertNumber(101, 1)).thenReturn(JsonNumber(101, 1))
-        whenever(typeMappingMock.convertString("some text", 1)).thenReturn(JsonString("some text", 1))
-        whenever(typeMappingMock.convertBoolean(true, 1)).thenReturn(JsonBoolean(true, 1))
-        whenever(typeMappingMock.convertObject(objectDataMap, 0)).thenReturn(expected)
+        whenever(typeMappingMock.convertNumber(101)).thenReturn(JsonNumber(101))
+        whenever(typeMappingMock.convertString("some text")).thenReturn(JsonString("some text"))
+        whenever(typeMappingMock.convertBoolean(true)).thenReturn(JsonBoolean(true))
+        whenever(typeMappingMock.convertObject(objectDataMap)).thenReturn(expected)
 
         val result = toTest.toJsonElement(simpleTestDataClassWithRenamedProperty)
 
-        verify(typeMappingMock).convertObject(objectDataMap, 0)
+        verify(typeMappingMock).convertObject(objectDataMap)
         assertEquals(expected, result)
 
         println(result)
@@ -374,11 +372,11 @@ internal class JsonGeneratorTest {
         val value = null
         val expected = JsonNullNode()
 
-        whenever(typeMappingMock.createNullNode(0)).thenReturn(expected)
+        whenever(typeMappingMock.createNullNode()).thenReturn(expected)
 
         val result = toTest.toJsonElement(value)
 
-        verify(typeMappingMock).createNullNode(0)
+        verify(typeMappingMock).createNullNode()
         assertEquals(expected, result)
     }
 }

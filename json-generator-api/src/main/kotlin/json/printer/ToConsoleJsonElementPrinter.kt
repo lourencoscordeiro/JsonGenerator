@@ -8,6 +8,6 @@ import json.models.JsonElement
 class ToConsoleJsonElementPrinter : JsonElementPrinter {
 
     override fun print(jsonElement: JsonElement) {
-        println(jsonElement.toPrettyJsonString())
+        println(jsonElement.toPrettyJsonString(0))
     }
 }

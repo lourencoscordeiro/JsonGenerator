@@ -7,10 +7,9 @@ internal class JsonBooleanTest {
 
     @Test
     fun `returns correct values`() {
-        val jsonBoolean = JsonBoolean(true, 3)
+        val jsonBoolean = JsonBoolean(true)
 
-        assertEquals(3, jsonBoolean.depth)
         assertEquals(true, jsonBoolean.value)
-        assertEquals("true", jsonBoolean.toPrettyJsonString())
+        assertEquals("true", jsonBoolean.toPrettyJsonString(0))
     }
 }

@@ -11,37 +11,34 @@ internal class DefaultTypeMappingTest {
     @Test
     fun `convertNumber returns correct value`() {
         val number: Number = 3
-        val length = 1
 
         val simpleJsonNumber = JsonNumber(number)
-        val jsonNumberWithLength = JsonNumber(number, length)
+        val jsonNumberWithLength = JsonNumber(number)
 
-        assertEquals(simpleJsonNumber, toTest.convertNumber(number, 0))
-        assertEquals(jsonNumberWithLength, toTest.convertNumber(number, length))
+        assertEquals(simpleJsonNumber, toTest.convertNumber(number))
+        assertEquals(jsonNumberWithLength, toTest.convertNumber(number))
     }
 
     @Test
     fun `convertString returns correct value`() {
         val string = "string"
-        val length = 1
 
         val simpleJsonString = JsonString(string)
-        val jsonStringWithLength = JsonString(string, length)
+        val jsonStringWithLength = JsonString(string)
 
-        assertEquals(simpleJsonString, toTest.convertString(string, 0))
-        assertEquals(jsonStringWithLength, toTest.convertString(string, length))
+        assertEquals(simpleJsonString, toTest.convertString(string))
+        assertEquals(jsonStringWithLength, toTest.convertString(string))
     }
 
     @Test
     fun `convertBoolean returns correct value`() {
         val boolean = true
-        val length = 1
 
         val simpleJsonBoolean = JsonBoolean(boolean)
-        val jsonBooleanWithLength = JsonBoolean(boolean, length)
+        val jsonBooleanWithLength = JsonBoolean(boolean)
 
-        assertEquals(simpleJsonBoolean, toTest.convertBoolean(boolean, 0))
-        assertEquals(jsonBooleanWithLength, toTest.convertBoolean(boolean, length))
+        assertEquals(simpleJsonBoolean, toTest.convertBoolean(boolean))
+        assertEquals(jsonBooleanWithLength, toTest.convertBoolean(boolean))
     }
 
     @Test
@@ -49,13 +46,12 @@ internal class DefaultTypeMappingTest {
         val jsonString1 = JsonString("some text")
         val jsonString2 = JsonString("some other text")
         val listOfJsonElements = listOf(jsonString1, jsonString2)
-        val depth = 1
 
         val simpleJsonList = JsonArray(listOfJsonElements)
-        val jsonListWithDepth = JsonArray(listOfJsonElements, depth)
+        val jsonListWithDepth = JsonArray(listOfJsonElements)
 
-        assertEquals(simpleJsonList, toTest.convertList(listOfJsonElements, 0))
-        assertEquals(jsonListWithDepth, toTest.convertList(listOfJsonElements, depth))
+        assertEquals(simpleJsonList, toTest.convertList(listOfJsonElements))
+        assertEquals(jsonListWithDepth, toTest.convertList(listOfJsonElements))
     }
 
     @Test
@@ -70,21 +66,10 @@ internal class DefaultTypeMappingTest {
         val depth = 1
 
         val simpleJsonObject = JsonObject(listOfJsonKeyValuePair)
-        val jsonObjectWithDepth = JsonObject(listOfJsonKeyValuePair, depth)
+        val jsonObjectWithDepth = JsonObject(listOfJsonKeyValuePair)
 
-        assertEquals(simpleJsonObject, toTest.convertObject(mapOfJsonElements, 0))
-        assertEquals(jsonObjectWithDepth, toTest.convertObject(mapOfJsonElements, depth))
-    }
-
-    @Test
-    fun `createNullNode returns correct value`() {
-        val length = 1
-
-        val simpleJsonNull = JsonNullNode()
-        val jsonNullWithLength = JsonNullNode(length)
-
-        assertEquals(simpleJsonNull, toTest.createNullNode(0))
-        assertEquals(jsonNullWithLength, toTest.createNullNode(length))
+        assertEquals(simpleJsonObject, toTest.convertObject(mapOfJsonElements))
+        assertEquals(jsonObjectWithDepth, toTest.convertObject(mapOfJsonElements))
     }
 
 }

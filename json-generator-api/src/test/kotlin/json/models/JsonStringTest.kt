@@ -7,11 +7,10 @@ internal class JsonStringTest {
 
     @Test
     fun `returns correct values`() {
-        val jsonString = JsonString("some text", 3)
+        val jsonString = JsonString("some text")
 
-        assertEquals(3, jsonString.depth)
         assertEquals("some text", jsonString.value)
-        assertEquals("\"some text\"", jsonString.toPrettyJsonString())
+        assertEquals("\"some text\"", jsonString.toPrettyJsonString(0))
     }
 
 //    @Test

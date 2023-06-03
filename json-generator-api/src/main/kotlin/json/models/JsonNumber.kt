@@ -6,7 +6,7 @@ import json.visitors.Visitor
 /**
  * Representation of a Number in JSON.
  */
-data class JsonNumber(val value: Number, override val depth: Int = 0) : JsonElement {
+data class JsonNumber(val value: Number) : JsonElement {
 
     override val observers: MutableList<JsonElementObserver> = mutableListOf()
 
@@ -14,7 +14,6 @@ data class JsonNumber(val value: Number, override val depth: Int = 0) : JsonElem
         visitor.visit(this)
     }
 
-    override fun toPrettyJsonString(): String = value.toString()
+    override fun toPrettyJsonString(depth: Int): String = value.toString()
 
-    override fun toString(): String = toPrettyJsonString()
 }

@@ -6,7 +6,7 @@ import json.visitors.Visitor
 /**
  * Representation of a Boolean in JSON.
  */
-data class JsonBoolean(val value: Boolean, override val depth: Int = 0) : JsonElement {
+data class JsonBoolean(val value: Boolean) : JsonElement {
 
     override val observers: MutableList<JsonElementObserver> = mutableListOf()
 
@@ -14,8 +14,6 @@ data class JsonBoolean(val value: Boolean, override val depth: Int = 0) : JsonEl
         visitor.visit(this)
     }
 
-    override fun toPrettyJsonString(): String = value.toString()
-
-    override fun toString(): String = toPrettyJsonString()
+    override fun toPrettyJsonString(depth: Int): String = value.toString()
 
 }

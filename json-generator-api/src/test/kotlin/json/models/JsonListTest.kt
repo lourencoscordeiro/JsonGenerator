@@ -7,14 +7,13 @@ internal class JsonListTest {
 
     @Test
     fun `returns correct values`() {
-        val jsonNumber1 = JsonNumber(101, 1)
-        val jsonNumber2 = JsonNumber(102, 1)
-        val jsonNumber3 = JsonNumber(103, 1)
+        val jsonNumber1 = JsonNumber(101)
+        val jsonNumber2 = JsonNumber(102)
+        val jsonNumber3 = JsonNumber(103)
         val listOfJsonNumbers = listOf(jsonNumber1, jsonNumber2, jsonNumber3)
 
-        val jsonList = JsonArray(listOfJsonNumbers, 0)
+        val jsonList = JsonArray(listOfJsonNumbers)
 
-        assertEquals(0, jsonList.depth)
         assertEquals(listOfJsonNumbers, jsonList.elements)
 
         val expectedStr = """
@@ -24,7 +23,7 @@ internal class JsonListTest {
              	103
             ]
         """.trimIndent()
-        assertEquals(expectedStr, jsonList.toPrettyJsonString())
+        assertEquals(expectedStr, jsonList.toPrettyJsonString(0))
     }
 
 }
