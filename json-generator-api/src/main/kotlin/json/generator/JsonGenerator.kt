@@ -6,6 +6,7 @@ import json.generator.annotations.RenamedJsonProperty
 import json.generator.mapping.TypeMapping
 import json.models.JsonElement
 import json.models.JsonArray
+import json.models.JsonKeyValuePair
 import json.models.JsonObject
 import util.dataClassFields
 import kotlin.reflect.full.findAnnotations
@@ -30,6 +31,7 @@ data class JsonGenerator(val typeMapping: TypeMapping = TypeMapping.default()) {
             is List<*>, is Set<*> -> mapList(value as Collection<*>, depth)
             is Array<*> -> mapList((value.toCollection(ArrayList())), depth)
 
+            is Pair<*, *> -> JsonKeyValuePair(value.first as String, toJsonElement(value.second, depth))
             is Map<*, *> -> typeMapping.convertObject(value.map { (key, value) ->
                 key.toString() to toJsonElement(value, depth + 1) }.toMap(), depth)
 

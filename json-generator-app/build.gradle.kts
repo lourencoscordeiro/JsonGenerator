@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":json-generator-api"))
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")

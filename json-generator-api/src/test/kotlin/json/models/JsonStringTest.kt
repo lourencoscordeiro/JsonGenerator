@@ -14,4 +14,11 @@ internal class JsonStringTest {
         assertEquals("\"some text\"", jsonString.toPrettyJsonString())
     }
 
+//    @Test
+//    fun `updates value correctly`() {
+//        val jsonString = JsonString("some text")
+//        jsonString.updateValue("some other text")
+//        assertEquals("some other text", jsonString.value)
+//    }
+
 }
