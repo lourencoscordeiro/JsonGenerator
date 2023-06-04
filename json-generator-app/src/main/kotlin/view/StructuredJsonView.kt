@@ -1,17 +1,18 @@
 package view
 
-import json.models.JsonElement
+import json.models.JsonObject
 import json.models.command.AddElementCommand
-import json.models.observability.JsonElementObserver
+import json.models.command.UpdateElementCommand
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
-import java.awt.GridLayout
+import java.awt.event.KeyEvent
+import java.awt.event.KeyListener
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 
-class StructuredJsonView(private val jsonElement: JsonElement) : JLabel() {
+class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
 
 
     init {
@@ -53,7 +54,7 @@ class StructuredJsonView(private val jsonElement: JsonElement) : JLabel() {
                 val text = JOptionPane.showInputDialog("text")
 
                 // adds null element
-                val command = AddElementCommand(jsonElement, Pair(text, "N/A"))
+                val command = AddElementCommand(rootJsonObject, Pair(text, "N/A"))
                 command.run()
                 panel.add(structureJsonDataWidget(text, "N/A"))
                 panel.add(Box.createRigidArea(Dimension(0, 1)))
@@ -80,21 +81,53 @@ class StructuredJsonView(private val jsonElement: JsonElement) : JLabel() {
             text.addMouseListener(object : MouseAdapter() {
                 override fun mouseClicked(e: MouseEvent) {
                     if (e.clickCount == 2) {
-                        convertLabelToTextField(text)
+                        convertLabelToTextField(key, text)
                     }
                 }
             })
             add(text)
         }
 
-    private fun convertLabelToTextField(label:JLabel) {
+    private fun convertLabelToTextField(key: String, label: JLabel) {
         val parentNode = label.parent as JPanel
         val textField = JTextField(label.text)
+
         textField.maximumSize = Dimension(100 ,20)
+        textField.addKeyListener(object : KeyListener {
+            override fun keyTyped(e: KeyEvent?) {
+                // no implementation needed
+            }
+
+            override fun keyPressed(e: KeyEvent?) {
+                if (e != null && e.keyCode == KeyEvent.VK_ENTER) {
+
+                    val newValue = textField.text
+                    UpdateElementCommand(rootJsonObject, Pair(key, newValue)).run()
+
+                    val newJLabel = JLabel(newValue)
+                    parentNode.remove(textField)
+                    parentNode.add(newJLabel, BorderLayout.CENTER)
+
+                    parentNode.revalidate()
+                    parentNode.repaint()
+                }
+
+
+            }
+
+            override fun keyReleased(e: KeyEvent?) {
+                // no implementation needed
+            }
+
+        })
+
         parentNode.remove(label)
         parentNode.add(textField, BorderLayout.CENTER)
+
         parentNode.revalidate()
         parentNode.repaint()
+
+
 
     }
 

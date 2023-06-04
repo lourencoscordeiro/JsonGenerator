@@ -18,7 +18,7 @@ data class IntegerPropertyValidationVisitor(val propertyName: String) : Visitor 
      */
     override fun visit(keyValuePair: JsonKeyValuePair) {
         if (keyValuePair.name == propertyName) {
-            isValid = keyValuePair.value is JsonNumber && keyValuePair.value.value is Int
+            isValid = keyValuePair.value is JsonNumber && (keyValuePair.value as JsonNumber).value is Int
         }
     }
 
