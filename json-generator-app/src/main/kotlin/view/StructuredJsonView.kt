@@ -1,6 +1,8 @@
 package view
 
+import json.models.JsonArray
 import json.models.JsonElement
+import json.models.JsonKeyValuePair
 import json.models.JsonObject
 import json.models.command.AddElementCommand
 import json.models.command.UpdateElementCommand
@@ -43,7 +45,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
             })
         }
 
-    private fun addComponent(e: MouseEvent, panel:JPanel){
+    private fun addComponent(e: MouseEvent, panel:JPanel,jsonElement: JsonElement=rootJsonObject){
         if (SwingUtilities.isRightMouseButton(e)) {
             val menu = JPopupMenu("Message")
             val addSimpleAttribute = JButton("Add simple JSON attribute")
@@ -53,9 +55,9 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
                 val text = JOptionPane.showInputDialog("Property Name")
 
                 // adds null element
-                val command = AddElementCommand(rootJsonObject, Pair(text, "N/A"))
+                val command = AddElementCommand(jsonElement, Pair(text, "N/A"))
                 command.run()
-                panel.add(structureJsonDataWidget(text, "N/A"))
+                panel.add(structureJsonDataWidget(jsonElement,text, "N/A"))
                 panel.add(Box.createRigidArea(Dimension(0, 1)))
                 menu.isVisible = false
                 panel.revalidate()
@@ -66,8 +68,8 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
                 val text = JOptionPane.showInputDialog("List Attribute Name")
 
                 // adds null element
-                AddElementCommand(rootJsonObject, Pair(text, listOf<JsonElement>())).run()
-                panel.add(structureJsonDataWidget(text, "N/A", true))
+                AddElementCommand(jsonElement, Pair(text, listOf<JsonElement>())).run()
+                panel.add(structureJsonListDataWidget(text,jsonElement))
                 panel.add(Box.createRigidArea(Dimension(0, 1)))
 
                 menu.isVisible = false
@@ -82,7 +84,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
 
     }
 
-    private fun structureJsonDataWidget(key: String, value: String, isList: Boolean = false): JPanel =
+    private fun structureJsonDataWidget(jsonElement: JsonElement, key:String,value: String): JPanel =
         JPanel().apply {
 
             layout = BoxLayout(this, BoxLayout.X_AXIS)
@@ -99,26 +101,57 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
             text.addMouseListener(object : MouseAdapter() {
                 override fun mouseClicked(e: MouseEvent) {
                     if (e.clickCount == 2) {
-                        convertLabelToTextField(key, text)
+                        convertLabelToTextField(jsonElement,key, text)
                     }
                 }
             })
             add(text)
 
-            if (isList) {
-                addMouseListener(object : MouseAdapter() {
-                    override fun mouseClicked(e: MouseEvent) {
-                        if (SwingUtilities.isRightMouseButton(e)) {
-                            val text = JOptionPane.showInputDialog("Property Name")
-                            AddElementCommand(rootJsonObject.attributes.find { it.name == key }!!.value,
-                                text).run()
-                        }
-                    }
-                })
-            }
+            /*
+if (isList) {
+addMouseListener(object : MouseAdapter() {
+    override fun mouseClicked(e: MouseEvent) {
+            addComponent(e,this@apply,rootJsonObject.attributes.find { it.name == key }!!.value)
+            val text = JOptionPane.showInputDialog("Property Name")
+            AddElementCommand(rootJsonObject.attributes.find { it.name == key }!!.value, text).run()
+    }
+})
+        */
         }
 
-    private fun convertLabelToTextField(key: String, label: JLabel) {
+    private fun structureJsonListDataWidget(key: String, jsonParent:JsonElement): JPanel =
+        JPanel().apply {
+
+            layout = BoxLayout(this, BoxLayout.Y_AXIS)
+            border = BorderFactory.createLineBorder(Color.BLACK, 2)
+
+            alignmentX = Component.LEFT_ALIGNMENT
+            alignmentY = Component.TOP_ALIGNMENT
+
+
+            //maximumSize = Dimension(Int.MAX_VALUE,20)
+
+            add(JLabel(key))
+            add(Box.createHorizontalStrut(10))
+
+            val list = JPanel()
+            addMouseListener(object : MouseAdapter() {
+                override fun mouseClicked(e: MouseEvent) {
+                    addComponent(e, this@apply, rootJsonObject.attributes.find { it.name == key }!!.value)
+
+                }
+            })
+
+            add(list)
+        }
+
+
+
+
+
+
+
+    private fun convertLabelToTextField(jsonElement: JsonElement, key: String, label: JLabel) {
         val parentNode = label.parent as JPanel
         val textField = JTextField(label.text)
 
@@ -129,19 +162,29 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
                 if (e != null && e.keyCode == KeyEvent.VK_ENTER) {
 
                     val newValue = textField.text
-                    UpdateElementCommand(rootJsonObject, Pair(key, newValue)).run()
+                    val element = if (jsonElement is JsonArray) {
+                        jsonElement.elements.find { it is JsonKeyValuePair && it.name == key }!!
+                    } else {
+                        jsonElement
+                    }
+                    UpdateElementCommand(element, Pair(key, newValue)).run()
 
                     val newJLabel = JLabel(newValue)
+                    newJLabel.addMouseListener(object : MouseAdapter() {
+                        override fun mouseClicked(e: MouseEvent) {
+                            if (e.clickCount == 2) {
+                                convertLabelToTextField(jsonElement,key, newJLabel)
+                            }
+                        }
+                    })
                     parentNode.remove(textField)
                     parentNode.add(newJLabel, BorderLayout.CENTER)
 
                     parentNode.revalidate()
                     parentNode.repaint()
+                    //println(rootJsonObject.toPrettyJsonString(0))
                 }
-
-
             }
-
         })
 
         parentNode.remove(label)
@@ -149,10 +192,5 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
 
         parentNode.revalidate()
         parentNode.repaint()
-
-
-
     }
-
-
 }

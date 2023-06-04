@@ -15,6 +15,9 @@ interface JsonUpdateCommand {
 
 class AddElementCommand(private val jsonElement: JsonElement, private val newElement: Any?) : JsonUpdateCommand {
 
+    fun getNewElement():Any?{
+        return newElement
+    }
     override fun run() {
         jsonElement.addElement(generator.toJsonElement(newElement))
     }
