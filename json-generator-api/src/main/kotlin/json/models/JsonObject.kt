@@ -9,12 +9,30 @@ import json.visitors.Visitor
 data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
     JsonElement {
 
+    init {
+        val duplicateAttributes = attributes.groupBy { it.name }.filter { it.value.size > 1 }.flatMap { it.value }
+        if (duplicateAttributes.isNotEmpty()) {
+            throw IllegalArgumentException("No duplicate keys on a JSON Object allowed!")
+        }
+    }
+
     override val observers: MutableList<JsonElementObserver> = mutableListOf()
 
-    override fun addElement(newValue: JsonElement): JsonElement {
+    override fun addElement(newValue: JsonElement) {
+        if (attributes.any { it.name == (newValue as JsonKeyValuePair).name }) {
+            throw IllegalArgumentException("No duplicate keys on a JSON Object allowed!")
+        }
         attributes = attributes.plus(newValue as JsonKeyValuePair)
         observers.forEach { it.addedElement(newValue) }
-        return this
+    }
+
+    override fun updateElement(newValue: JsonElement) {
+        if (!attributes.any { it.name == (newValue as JsonKeyValuePair).name }) {
+            throw IllegalArgumentException("No attribute '${(newValue as JsonKeyValuePair).name}' found on the JSON Object to be updated!")
+        }
+        val attribute: JsonKeyValuePair = attributes.find { it.name == (newValue as JsonKeyValuePair).name }!!
+        attribute.updateElement((newValue as JsonKeyValuePair).value)
+        observers.forEach { it.updatedElement(newValue) }
     }
 
     override fun accept(visitor: Visitor) {

@@ -9,10 +9,11 @@ import json.visitors.Visitor
  */
 interface JsonElement : JsonElementObservable {
 
-    /**
-     * Entry point for an update on a Json Element.
-     */
-    fun addElement(newValue: JsonElement): JsonElement {
+    fun addElement(newValue: JsonElement) {
+        throw NotImplementedError("Value addition is not implemented for this Json Element!")
+    }
+
+    fun updateElement(newValue: JsonElement) {
         throw NotImplementedError("Value update is not implemented for this Json Element!")
     }
 

@@ -11,7 +11,7 @@ import view.StructuredJsonView
 
 fun main() {
 
-    val jsonElement: JsonElement = JsonObject()
+    val jsonElement = JsonObject()
 
     val view = JFrame()
     view.title = "JSON Object Editor"

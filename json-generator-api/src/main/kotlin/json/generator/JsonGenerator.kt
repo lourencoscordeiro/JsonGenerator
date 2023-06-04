@@ -20,7 +20,7 @@ data class JsonGenerator(val typeMapping: TypeMapping = TypeMapping.default()) {
 
         return when (value) {
 
-            is String -> typeMapping.convertString(value)
+            is String -> mapString(value)
             is Enum<*> -> typeMapping.convertString(value.toString())
             is Boolean -> typeMapping.convertBoolean(value)
             is Char -> typeMapping.convertString(value.toString())
@@ -42,6 +42,22 @@ data class JsonGenerator(val typeMapping: TypeMapping = TypeMapping.default()) {
         }
     }
 
+    private fun mapString(value: String): JsonElement {
+        if (value == "null") return typeMapping.createNullNode()
+
+        val stringAsBoolean = value.toBooleanStrictOrNull()
+        if (stringAsBoolean != null) return typeMapping.convertBoolean(stringAsBoolean)
+
+        val stringAsNumber = value.toDoubleOrNull()
+        if (stringAsNumber != null) return typeMapping.convertNumber(stringAsNumber)
+
+        return typeMapping.convertString(value)
+    }
+
+    private fun mapList(list: Collection<*>): JsonArray {
+        return typeMapping.convertList(list.map { toJsonElement(it) })
+    }
+
     @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
     @OptIn(ExperimentalStdlibApi::class)
     private fun mapUnknownObject(value: Any): JsonObject {
@@ -57,10 +73,6 @@ data class JsonGenerator(val typeMapping: TypeMapping = TypeMapping.default()) {
                             .toString()
                     propertyName to toJsonElement(propertyValue)
                 })
-    }
-
-    private fun mapList(list: Collection<*>): JsonArray {
-        return typeMapping.convertList(list.map { toJsonElement(it) })
     }
 
 }

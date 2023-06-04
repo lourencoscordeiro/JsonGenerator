@@ -10,6 +10,8 @@ interface JsonElementObserver {
 
     fun addedElement(newValue: JsonElement) {}
 
+    fun updatedElement(newValue: JsonElement) {}
+
 }
 
 interface JsonElementObservable {
