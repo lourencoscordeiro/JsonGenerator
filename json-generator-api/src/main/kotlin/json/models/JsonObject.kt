@@ -22,7 +22,9 @@ data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
         if (attributes.any { it.name == (newValue as JsonKeyValuePair).name }) {
             throw IllegalArgumentException("No duplicate keys on a JSON Object allowed!")
         }
-        attributes = attributes.plus(newValue as JsonKeyValuePair)
+        val attribute = newValue as JsonKeyValuePair
+        observers.forEach { attribute.value.addObserver(it) }
+        attributes = attributes.plus(attribute)
         observers.forEach { it.addedElement(newValue) }
     }
 

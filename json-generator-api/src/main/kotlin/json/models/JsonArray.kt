@@ -6,7 +6,7 @@ import json.visitors.Visitor
 /**
  * Representation of a List in JSON.
  */
-data class JsonArray(val elements: List<JsonElement>) : JsonElement {
+data class JsonArray(var elements: List<JsonElement>) : JsonElement {
 
     init {
         if (elements.any { it is JsonObject || it is JsonArray }) {
@@ -15,6 +15,11 @@ data class JsonArray(val elements: List<JsonElement>) : JsonElement {
     }
 
     override val observers: MutableList<JsonElementObserver> = mutableListOf()
+
+    override fun addElement(newValue: JsonElement) {
+        elements = elements.plus(newValue)
+        observers.forEach { it.addedElement(newValue) }
+    }
 
     override fun accept(visitor: Visitor) {
         visitor.visit(this)
@@ -25,7 +30,7 @@ data class JsonArray(val elements: List<JsonElement>) : JsonElement {
         ",\n ",
         "[\n",
         "\n${createIndentation(depth)}]"
-    ) { "${createIndentation(depth)}${it.toPrettyJsonString(depth)}" }
+    ) { "${createIndentation(depth + 1)}${it.toPrettyJsonString(depth)}" }
 
     private fun createIndentation(indentationRatio: Int): String = "\t".repeat(indentationRatio)
 
