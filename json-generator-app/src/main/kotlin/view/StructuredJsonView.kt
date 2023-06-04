@@ -1,15 +1,14 @@
 package view
 
+import json.models.JsonElement
 import json.models.JsonObject
 import json.models.command.AddElementCommand
 import json.models.command.UpdateElementCommand
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
-import java.awt.event.KeyEvent
-import java.awt.event.KeyListener
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+import java.awt.event.*
 import javax.swing.*
 
 class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
@@ -44,14 +43,14 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
             })
         }
 
-
     private fun addComponent(e: MouseEvent, panel:JPanel){
         if (SwingUtilities.isRightMouseButton(e)) {
             val menu = JPopupMenu("Message")
-            val add = JButton("add")
+            val addSimpleAttribute = JButton("Add simple JSON attribute")
+            val addListAttribute = JButton("Add list JSON attribute")
 
-            add.addActionListener {
-                val text = JOptionPane.showInputDialog("text")
+            addSimpleAttribute.addActionListener {
+                val text = JOptionPane.showInputDialog("Property Name")
 
                 // adds null element
                 val command = AddElementCommand(rootJsonObject, Pair(text, "N/A"))
@@ -63,20 +62,39 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
                 panel.repaint()
             }
 
-            menu.add(add);
+            addListAttribute.addActionListener {
+                val text = JOptionPane.showInputDialog("List Attribute Name")
+
+                // adds null element
+                AddElementCommand(rootJsonObject, Pair(text, listOf<JsonElement>())).run()
+                panel.add(structureJsonDataWidget(text, "N/A", true))
+                panel.add(Box.createRigidArea(Dimension(0, 1)))
+
+                menu.isVisible = false
+                panel.revalidate()
+                panel.repaint()
+            }
+
+            menu.add(addSimpleAttribute);
+            menu.add(addListAttribute);
             menu.show(this, 100, 100);
         }
 
     }
 
-    private fun structureJsonDataWidget(key: String, value: String): JPanel =
+    private fun structureJsonDataWidget(key: String, value: String, isList: Boolean = false): JPanel =
         JPanel().apply {
+
             layout = BoxLayout(this, BoxLayout.X_AXIS)
+            border = BorderFactory.createLineBorder(Color.BLACK, 2)
+
             alignmentX = Component.LEFT_ALIGNMENT
             alignmentY = Component.TOP_ALIGNMENT
             maximumSize = Dimension(Int.MAX_VALUE,20)
+
             add(JLabel(key))
             add(Box.createHorizontalStrut(10))
+
             val text = JLabel(value)
             text.addMouseListener(object : MouseAdapter() {
                 override fun mouseClicked(e: MouseEvent) {
@@ -86,6 +104,18 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
                 }
             })
             add(text)
+
+            if (isList) {
+                addMouseListener(object : MouseAdapter() {
+                    override fun mouseClicked(e: MouseEvent) {
+                        if (SwingUtilities.isRightMouseButton(e)) {
+                            val text = JOptionPane.showInputDialog("Property Name")
+                            AddElementCommand(rootJsonObject.attributes.find { it.name == key }!!.value,
+                                text).run()
+                        }
+                    }
+                })
+            }
         }
 
     private fun convertLabelToTextField(key: String, label: JLabel) {
@@ -93,10 +123,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
         val textField = JTextField(label.text)
 
         textField.maximumSize = Dimension(100 ,20)
-        textField.addKeyListener(object : KeyListener {
-            override fun keyTyped(e: KeyEvent?) {
-                // no implementation needed
-            }
+        textField.addKeyListener(object : KeyAdapter() {
 
             override fun keyPressed(e: KeyEvent?) {
                 if (e != null && e.keyCode == KeyEvent.VK_ENTER) {
@@ -113,10 +140,6 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
                 }
 
 
-            }
-
-            override fun keyReleased(e: KeyEvent?) {
-                // no implementation needed
             }
 
         })
