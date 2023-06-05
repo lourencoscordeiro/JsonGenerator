@@ -7,29 +7,31 @@ import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
+import java.awt.GridLayout
 import java.awt.event.*
 import javax.swing.*
 
-class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
+class StructuredJsonView(private val rootJsonObject: JsonObject) : JPanel() {
 
 
     init {
 
         layout = BorderLayout()
-
-        val scrollPane = JScrollPane(structuredJsonViewPanel()).apply {
+       val scrollPane = JScrollPane(structuredJsonViewPanel()).apply {
             horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS
             verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_ALWAYS
         }
         add(scrollPane, BorderLayout.CENTER)
-
+        maximumSize = Dimension(300,Int.MAX_VALUE)
     }
 
     private fun structuredJsonViewPanel(): JPanel=
         JPanel().apply {
-            layout = BoxLayout(this, BoxLayout.Y_AXIS)
-            alignmentX = Component.LEFT_ALIGNMENT
-            alignmentY = Component.TOP_ALIGNMENT
+            layout = GridLayout(0, 1)
+            //layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
+            //alignmentX = Component.LEFT_ALIGNMENT
+            //alignmentY = Component.TOP_ALIGNMENT
+            name = "mainPanel"
 
             // Add padding to the top and left
             border = BorderFactory.createEmptyBorder(10, 20, 0, 0)
@@ -37,15 +39,16 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
             // menu
             addMouseListener(object : MouseAdapter() {
                 override fun mouseClicked(e: MouseEvent) {
-                    addComponent(e,this@apply)
+                    if (SwingUtilities.isRightMouseButton(e)) {
+                        addComponent(this@apply)
+                    }
                 }
             })
         }
 
 
 
-    private fun addComponent(e: MouseEvent, panel:JPanel,jsonElement: JsonElement=rootJsonObject){
-        if (SwingUtilities.isRightMouseButton(e)) {
+    private fun addComponent(panel:JPanel,jsonElement: JsonElement=rootJsonObject){
             val menu = JPopupMenu("Message")
             val addSimpleAttribute = JButton("Add simple JSON attribute")
             val addListAttribute = JButton("Add list JSON attribute")
@@ -76,7 +79,6 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JLabel() {
             menu.add(addListAttribute)
             menu.add(addObjectAttribute)
             menu.show(this, 100, 100)
-        }
 
     }
 
@@ -85,44 +87,85 @@ private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
 
     val newKeyValuePairPanel = createKeyValuePairJPanel(command.getNewElement() as JsonKeyValuePair)
     panel.add(newKeyValuePairPanel)
+
     //panel.add(Box.createRigidArea(Dimension(0, 1)))
 
     menu.isVisible = false
     panel.revalidate()
     panel.repaint()
+    resizeWindow(panel)
 }
+
+    private fun resizeWindow(panel: JPanel) {
+
+        var height = 20
+        println("panel Name = "+ panel.name)
+        panel.components.forEach { child ->
+            height += child.height
+            println("Child Name = "+ child.name+"     child height: " + child.height)
+        }
+        println("final height = " + height)
+        panel.preferredSize = Dimension(300, height)
+        panel.revalidate()
+        panel.repaint()
+    }
+
+
 
     private fun createKeyValuePairJPanel(keyValuePair: JsonKeyValuePair):JPanel =
         JPanel().apply {
+            name = keyValuePair.name
             layout = BoxLayout(this, BoxLayout.X_AXIS)
-            border = BorderFactory.createLineBorder(Color.BLACK, 2)
+            //border = BorderFactory.createLineBorder(Color.BLACK, 2)
             alignmentX = Component.LEFT_ALIGNMENT
             alignmentY = Component.TOP_ALIGNMENT
+            maximumSize = Dimension(Int.MAX_VALUE, 20)
 
             add(JLabel(keyValuePair.name))
             add(Box.createHorizontalStrut(10))
             val value = keyValuePair.value
-            if(value is JsonArray)
-                add(createListPanel(value))
-            else if(value is JsonObject)
-                add(createObjectPanel(value))
-            else
-                add(createInteractiveLabel(keyValuePair.value.toPrettyJsonString(0).replace("\"", "")   ,this@apply,keyValuePair.name,rootJsonObject))
+            if (value is JsonArray) {
+                val panel = createPanel()
+                panel.name = keyValuePair.name
+                this@apply.addMouseListener(object : MouseAdapter() {
+                    override fun mouseClicked(e: MouseEvent) {
+                        if (SwingUtilities.isRightMouseButton(e)) {
+                            addValuesToList(value, panel)
+                        }
+                    }
+                })
+                add(panel)
+            } else if (value is JsonObject) {
+                val panel =createPanel()
+                panel.name = keyValuePair.name
+                this@apply.addMouseListener(object : MouseAdapter() {
+                    override fun mouseClicked(e: MouseEvent) {
+                        if (SwingUtilities.isRightMouseButton(e)) {
+                            addComponent(panel, value)
+                        }
+                    }
+                })
+                add(panel)
+            } else {
+                add(
+                    createInteractiveLabel(
+                        keyValuePair.name,
+                        keyValuePair.value.toPrettyJsonString(0).replace("\"", ""),
+                        this@apply,
+                        keyValuePair
+                    )
+                )
+            }
         }
 
-    private fun createListPanel(jsonList: JsonArray):JPanel =
+    private fun createPanel():JPanel =
         JPanel().apply {
-            layout = BoxLayout(this,BoxLayout.Y_AXIS)
+            layout = GridLayout(0, 1)
+
+            /*layout = BoxLayout(this,BoxLayout.Y_AXIS)
             alignmentX = Component.LEFT_ALIGNMENT
-            alignmentY = Component.TOP_ALIGNMENT
-            border = BorderFactory.createLineBorder(Color.BLACK, 2)
-            addMouseListener(object : MouseAdapter() {
-                override fun mouseClicked(e: MouseEvent) {
-                    if (e.clickCount == 2) {
-                        addValuesToList(jsonList, this@apply)
-                    }
-                }
-            })
+            alignmentY = Component.TOP_ALIGNMENT*/
+            // border = BorderFactory.createLineBorder(Color.BLACK, 2)
         }
     private fun addValuesToList(jsonArray:JsonArray,parent:JPanel) {
         val menu = JPopupMenu("Message")
@@ -134,31 +177,30 @@ private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
             // adds null element
             val command = AddElementCommand(jsonArray, text)
             command.run()
-            parent.add(JLabel(text))
+            val label = JLabel(text)
+            label.preferredSize = Dimension(Int.MAX_VALUE,20)
+            parent.add(label)
             menu.isVisible = false
-            parent.revalidate()
-            parent.repaint()
+            resizeWindow(parent)
         }
         menu.add(addSimpleAttribute)
         menu.show(this, 100, 100)
     }
 
-    private fun createObjectPanel(jsonObject: JsonObject):JPanel=
-        JPanel().apply {
-            layout = BoxLayout(this,BoxLayout.Y_AXIS)
-            alignmentX = Component.LEFT_ALIGNMENT
-            alignmentY = Component.TOP_ALIGNMENT
-            border = BorderFactory.createLineBorder(Color.BLACK, 2)
-
-            addMouseListener(object : MouseAdapter() {
-                override fun mouseClicked(e: MouseEvent) {
-                    if (e.clickCount == 2) {
-                        addComponent(e, this@apply, jsonObject)
-                    }
+    private fun createInteractiveLabel(key:String,text:String, parent:JPanel,jsonElement: JsonElement):JLabel {
+        val label = JLabel(text)
+        label.name = key
+        label.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if (e.clickCount == 2) {
+                    convertLabelToTextField(jsonElement,label)
                 }
-            })
-
-        }
+            }
+        })
+        parent.add(label)
+        resizeWindow(parent)
+        return label
+    }
 
 
     private fun convertLabelToTextField(jsonElement: JsonElement,  label: JLabel) {
@@ -178,26 +220,11 @@ private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
         parentNode.remove(label)
         parentNode.add(textField, BorderLayout.CENTER)
 
-        parentNode.revalidate()
-        parentNode.repaint()
+        resizeWindow(parentNode)
     }
 
 
-    private fun createInteractiveLabel(text:String, parent:JPanel,key:String,jsonElement: JsonElement):JLabel {
-        val label = JLabel(text)
-        label.name = key
-        label.addMouseListener(object : MouseAdapter() {
-            override fun mouseClicked(e: MouseEvent) {
-                if (e.clickCount == 2) {
-                    convertLabelToTextField(jsonElement,label)
-                }
-            }
-        })
-        parent.add(label)
-        parent.revalidate()
-        parent.repaint()
-        return label
-    }
+
 
     private fun submitChanges(textField:JTextField, jsonElement: JsonElement){
         val newValue = textField.text
@@ -205,11 +232,10 @@ private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
         val elementModifier = UpdateElementCommand(jsonElement, Pair(textField.name, newValue))
         elementModifier.run()
 
-        val label = createInteractiveLabel(newValue,parent,textField.name,jsonElement)
+        val label = createInteractiveLabel(textField.name,newValue,parent,jsonElement)
         parent.remove(textField)
         parent.add(label)
-        parent.revalidate()
-        parent.repaint()
+        resizeWindow(parent)
         println(rootJsonObject.toPrettyJsonString(0))
     }
 
