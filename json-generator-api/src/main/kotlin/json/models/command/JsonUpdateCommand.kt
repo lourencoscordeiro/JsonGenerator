@@ -13,13 +13,14 @@ interface JsonUpdateCommand {
     fun undo()
 }
 
-class AddElementCommand(private val jsonElement: JsonElement, private val newElement: Any?) : JsonUpdateCommand {
+class AddElementCommand(private val jsonElement: JsonElement, private var newElement: Any?) : JsonUpdateCommand {
 
-    fun getNewElement():Any?{
-        return newElement
+    fun getNewElement():JsonElement{
+        return newElement as JsonElement
     }
     override fun run() {
-        jsonElement.addElement(generator.toJsonElement(newElement))
+        newElement = generator.toJsonElement(newElement)
+        jsonElement.addElement(newElement as JsonElement)
     }
 
     override fun undo() {
@@ -28,10 +29,15 @@ class AddElementCommand(private val jsonElement: JsonElement, private val newEle
 
 }
 
-class UpdateElementCommand(private val jsonElement: JsonElement, private val newValue: Any) : JsonUpdateCommand {
+class UpdateElementCommand(private val jsonElement: JsonElement, private var newValue: Any) : JsonUpdateCommand {
 
+    fun getNewElement():JsonElement{
+
+        return newValue as JsonElement
+    }
     override fun run() {
-        jsonElement.updateElement(generator.toJsonElement(newValue))
+        newValue = generator.toJsonElement(newValue)
+        jsonElement.updateElement(newValue as JsonElement)
     }
 
     override fun undo() {
