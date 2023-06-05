@@ -3,15 +3,12 @@ package view
 import json.models.*
 import json.models.command.AddElementCommand
 import json.models.command.UpdateElementCommand
-import java.awt.BorderLayout
-import java.awt.Color
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.GridLayout
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
+import java.awt.*
 import java.awt.event.*
 import javax.swing.*
 
-class StructuredJsonView(private val rootJsonObject: JsonObject) : JPanel() {
+class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc:GridBagConstraints = GridBagConstraints(),private var i:Int=0) : JPanel() {
 
 
     init {
@@ -27,7 +24,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JPanel() {
 
     private fun structuredJsonViewPanel(): JPanel=
         JPanel().apply {
-            layout = GridLayout(0, 1)
+            layout = GridBagLayout()
             //layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
             //alignmentX = Component.LEFT_ALIGNMENT
             //alignmentY = Component.TOP_ALIGNMENT
@@ -82,30 +79,40 @@ class StructuredJsonView(private val rootJsonObject: JsonObject) : JPanel() {
 
     }
 
-private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
-    command.run()
+    private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
+        command.run()
 
-    val newKeyValuePairPanel = createKeyValuePairJPanel(command.getNewElement() as JsonKeyValuePair)
-    panel.add(newKeyValuePairPanel)
+        val newKeyValuePairPanel = createKeyValuePairJPanel(command.getNewElement() as JsonKeyValuePair)
+        if(panel.name == "mainPanel"){
+            gbc.gridy = i
+            gbc.gridx=0
+            gbc.fill = GridBagConstraints.HORIZONTAL
+            gbc.weightx = 1.0
+            i++
+        }
+        panel.add(newKeyValuePairPanel,gbc)
 
-    //panel.add(Box.createRigidArea(Dimension(0, 1)))
+        //panel.add(Box.createRigidArea(Dimension(0, 1)))
 
-    menu.isVisible = false
-    panel.revalidate()
-    panel.repaint()
-    resizeWindow(panel)
-}
+        menu.isVisible = false
+        panel.revalidate()
+        panel.repaint()
+        resizeWindow(panel)
+    }
+
+
+
 
     private fun resizeWindow(panel: JPanel) {
 
-        var height = 20
+        /*var height = 20
         println("panel Name = "+ panel.name)
         panel.components.forEach { child ->
             height += child.height
             println("Child Name = "+ child.name+"     child height: " + child.height)
         }
         println("final height = " + height)
-        panel.preferredSize = Dimension(300, height)
+        panel.preferredSize = Dimension(300, height)*/
         panel.revalidate()
         panel.repaint()
     }
@@ -116,10 +123,10 @@ private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
         JPanel().apply {
             name = keyValuePair.name
             layout = BoxLayout(this, BoxLayout.X_AXIS)
-            //border = BorderFactory.createLineBorder(Color.BLACK, 2)
+            border = BorderFactory.createLineBorder(Color.BLACK, 2)
             alignmentX = Component.LEFT_ALIGNMENT
             alignmentY = Component.TOP_ALIGNMENT
-            maximumSize = Dimension(Int.MAX_VALUE, 20)
+            //maximumSize = Dimension(Int.MAX_VALUE, 20)
 
             add(JLabel(keyValuePair.name))
             add(Box.createHorizontalStrut(10))
@@ -160,8 +167,8 @@ private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
 
     private fun createPanel():JPanel =
         JPanel().apply {
-            layout = GridLayout(0, 1)
-
+            layout = GridLayout(0,1)
+            //componentOrientation =
             /*layout = BoxLayout(this,BoxLayout.Y_AXIS)
             alignmentX = Component.LEFT_ALIGNMENT
             alignmentY = Component.TOP_ALIGNMENT*/
@@ -178,7 +185,7 @@ private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
             val command = AddElementCommand(jsonArray, text)
             command.run()
             val label = JLabel(text)
-            label.preferredSize = Dimension(Int.MAX_VALUE,20)
+            label.maximumSize = Dimension(Int.MAX_VALUE,20)
             parent.add(label)
             menu.isVisible = false
             resizeWindow(parent)
@@ -207,6 +214,7 @@ private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
         val parentNode = label.parent as JPanel
         val textField = JTextField(label.text)
         textField.name = label.name
+        textField.minimumSize = Dimension(100 ,20)
         textField.maximumSize = Dimension(100 ,20)
 
         textField.addKeyListener(object : KeyAdapter() {
@@ -222,9 +230,6 @@ private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
 
         resizeWindow(parentNode)
     }
-
-
-
 
     private fun submitChanges(textField:JTextField, jsonElement: JsonElement){
         val newValue = textField.text
