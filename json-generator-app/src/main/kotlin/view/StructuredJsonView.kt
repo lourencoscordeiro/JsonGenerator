@@ -3,17 +3,17 @@ package view
 import json.models.*
 import json.models.command.AddElementCommand
 import json.models.command.UpdateElementCommand
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 import java.awt.*
 import java.awt.event.*
 import javax.swing.*
 
-class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc:GridBagConstraints = GridBagConstraints(),private var i:Int=0) : JPanel() {
+class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc:GridBagConstraints = GridBagConstraints()) : JPanel() {
 
 
     init {
 
         layout = BorderLayout()
+
        val scrollPane = JScrollPane(structuredJsonViewPanel()).apply {
             horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS
             verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_ALWAYS
@@ -24,11 +24,14 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
 
     private fun structuredJsonViewPanel(): JPanel=
         JPanel().apply {
+            border = BorderFactory.createLineBorder(Color.GRAY, 1)
+
             layout = GridBagLayout()
             //layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
             //alignmentX = Component.LEFT_ALIGNMENT
             //alignmentY = Component.TOP_ALIGNMENT
             name = "mainPanel"
+
 
             // Add padding to the top and left
             border = BorderFactory.createEmptyBorder(10, 20, 0, 0)
@@ -84,11 +87,9 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
 
         val newKeyValuePairPanel = createKeyValuePairJPanel(command.getNewElement() as JsonKeyValuePair)
         if(panel.name == "mainPanel"){
-            gbc.gridy = i
             gbc.gridx=0
             gbc.fill = GridBagConstraints.HORIZONTAL
             gbc.weightx = 1.0
-            i++
         }
         panel.add(newKeyValuePairPanel,gbc)
 
@@ -97,22 +98,13 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
         menu.isVisible = false
         panel.revalidate()
         panel.repaint()
-        resizeWindow(panel)
+        repaintWindow(panel)
     }
 
 
 
 
-    private fun resizeWindow(panel: JPanel) {
-
-        /*var height = 20
-        println("panel Name = "+ panel.name)
-        panel.components.forEach { child ->
-            height += child.height
-            println("Child Name = "+ child.name+"     child height: " + child.height)
-        }
-        println("final height = " + height)
-        panel.preferredSize = Dimension(300, height)*/
+    private fun repaintWindow(panel: JPanel) {
         panel.revalidate()
         panel.repaint()
     }
@@ -123,7 +115,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
         JPanel().apply {
             name = keyValuePair.name
             layout = BoxLayout(this, BoxLayout.X_AXIS)
-            border = BorderFactory.createLineBorder(Color.BLACK, 2)
+            border = BorderFactory.createLineBorder(Color.GRAY, 1)
             alignmentX = Component.LEFT_ALIGNMENT
             alignmentY = Component.TOP_ALIGNMENT
             //maximumSize = Dimension(Int.MAX_VALUE, 20)
@@ -188,7 +180,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
             label.maximumSize = Dimension(Int.MAX_VALUE,20)
             parent.add(label)
             menu.isVisible = false
-            resizeWindow(parent)
+            repaintWindow(parent)
         }
         menu.add(addSimpleAttribute)
         menu.show(this, 100, 100)
@@ -205,7 +197,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
             }
         })
         parent.add(label)
-        resizeWindow(parent)
+        repaintWindow(parent)
         return label
     }
 
@@ -228,7 +220,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
         parentNode.remove(label)
         parentNode.add(textField, BorderLayout.CENTER)
 
-        resizeWindow(parentNode)
+        repaintWindow(parentNode)
     }
 
     private fun submitChanges(textField:JTextField, jsonElement: JsonElement){
@@ -240,7 +232,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
         val label = createInteractiveLabel(textField.name,newValue,parent,jsonElement)
         parent.remove(textField)
         parent.add(label)
-        resizeWindow(parent)
+        repaintWindow(parent)
         println(rootJsonObject.toPrettyJsonString(0))
     }
 
