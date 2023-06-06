@@ -16,12 +16,10 @@ data class JsonKeyValuePair(val name: String, var value: JsonElement) : JsonElem
     }
 
     override fun updateElement(newValue: JsonElement) {
-        if(newValue is JsonKeyValuePair && name == newValue.name)
-            value = newValue.value
-        else
-            value = newValue
+        value = if ( newValue is JsonKeyValuePair && name == newValue.name ) newValue.value else newValue
         observers.forEach { it.updatedElement(newValue) }
     }
+
     override fun toPrettyJsonString(depth: Int): String = "${createIndentation(depth)}\"$name\": ${value.toPrettyJsonString(depth)}"
 
     private fun createIndentation(indentationRatio: Int): String = "\t".repeat(indentationRatio)

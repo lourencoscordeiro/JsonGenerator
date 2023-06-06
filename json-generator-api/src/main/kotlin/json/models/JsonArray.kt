@@ -8,17 +8,24 @@ import json.visitors.Visitor
  */
 data class JsonArray(var elements: List<JsonElement>) : JsonElement {
 
-    init {
-        if (elements.any { it is JsonObject || it is JsonArray }) {
-            throw IllegalArgumentException("Array cannot contain an object or an array.")
-        }
-    }
-
     override val observers: MutableList<JsonElementObserver> = mutableListOf()
 
     override fun addElement(newValue: JsonElement) {
         elements = elements.plus(newValue)
         observers.forEach { it.addedElement(newValue) }
+    }
+
+    override fun eraseAll() {
+        elements = listOf()
+        observers.forEach { it.erasedAll() }
+    }
+
+    override fun eraseElement(valueToErase: JsonElement) {
+        val index = elements.indexOf(valueToErase)
+        if (-1 != index) {
+            elements = elements.drop(index)
+            observers.forEach { it.erasedElement(this) }
+        }
     }
 
     override fun accept(visitor: Visitor) {

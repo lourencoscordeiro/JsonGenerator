@@ -40,6 +40,19 @@ data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
         observers.forEach { it.updatedElement(newValue) }
     }
 
+    override fun eraseAll() {
+        attributes = listOf()
+        observers.forEach { it.erasedAll() }
+    }
+
+    override fun eraseElement(valueToErase: JsonElement) {
+        val index = attributes.indexOf(valueToErase)
+        if (-1 != index) {
+            attributes = attributes.drop(index)
+            observers.forEach { it.erasedElement(this) }
+        }
+    }
+
     override fun accept(visitor: Visitor) {
         visitor.visit(this)
         attributes.forEach{

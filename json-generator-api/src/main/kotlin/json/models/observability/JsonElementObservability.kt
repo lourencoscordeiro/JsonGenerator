@@ -12,6 +12,10 @@ interface JsonElementObserver {
 
     fun updatedElement(newValue: JsonElement) {}
 
+    fun erasedElement(erasedValue: JsonElement) {}
+
+    fun erasedAll() {}
+
 }
 
 interface JsonElementObservable {

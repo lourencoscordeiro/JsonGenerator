@@ -7,7 +7,7 @@ import java.awt.*
 import java.awt.event.*
 import javax.swing.*
 
-class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc:GridBagConstraints = GridBagConstraints()) : JPanel() {
+class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc:GridBagConstraints = GridBagConstraints()) : JPanel() {
 
 
     init {
@@ -43,36 +43,37 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
 
 
     private fun addComponent(panel:JPanel,jsonElement: JsonElement=rootJsonObject){
-            val menu = JPopupMenu("Message")
-            val addSimpleAttribute = JButton("Add simple JSON attribute")
-            val addListAttribute = JButton("Add list JSON attribute")
-            val addObjectAttribute = JButton("Add object JSON attribute")
+        val menu = JPopupMenu("Message")
+        val addSimpleAttribute = JButton("Add simple JSON attribute")
+        val addListAttribute = JButton("Add array JSON attribute")
+        val addObjectAttribute = JButton("Add object JSON attribute")
+        val eraseAll = JButton("Erase entire JSON object")
 
-            addSimpleAttribute.addActionListener {
-                val text = JOptionPane.showInputDialog("Property Name")
-                // adds null element
-                val command = AddElementCommand(jsonElement, Pair(text, "N/A"))
-                helper(command,panel,menu)
-            }
+        addSimpleAttribute.addActionListener {
+            val text = JOptionPane.showInputDialog("Property Name")
+            // adds null element
+            val command = AddElementCommand(jsonElement, Pair(text, "N/A"))
+            helper(command,panel,menu)
+        }
 
-            addListAttribute.addActionListener {
-                val text = JOptionPane.showInputDialog("List Attribute Name")
-                // adds null element
-                val command =AddElementCommand(jsonElement, Pair(text, listOf<JsonElement>()))
-                helper(command,panel,menu)
-            }
+        addListAttribute.addActionListener {
+            val text = JOptionPane.showInputDialog("Array Attribute Name")
+            // adds null element
+            val command =AddElementCommand(jsonElement, Pair(text, listOf<JsonElement>()))
+            helper(command,panel,menu)
+        }
 
-            addObjectAttribute.addActionListener {
-                val text = JOptionPane.showInputDialog("Object Attribute Name")
-                // adds null element
-                val command =  AddElementCommand(jsonElement, Pair(text,emptyMap<String,JsonElement>()))
-                helper(command,panel,menu)
-            }
+        addObjectAttribute.addActionListener {
+            val text = JOptionPane.showInputDialog("Object Attribute Name")
+            // adds null element
+            val command =  AddElementCommand(jsonElement, Pair(text,emptyMap<String,JsonElement>()))
+            helper(command,panel,menu)
+        }
 
-            menu.add(addSimpleAttribute)
-            menu.add(addListAttribute)
-            menu.add(addObjectAttribute)
-            menu.show(this, 100, 100)
+        menu.add(addSimpleAttribute)
+        menu.add(addListAttribute)
+        menu.add(addObjectAttribute)
+        menu.show(this, 100, 100)
 
     }
 

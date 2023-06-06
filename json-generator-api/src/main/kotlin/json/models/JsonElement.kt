@@ -17,6 +17,14 @@ interface JsonElement : JsonElementObservable {
         throw NotImplementedError("Value update is not implemented for this Json Element!")
     }
 
+    fun eraseAll() {
+        throw NotImplementedError("Element erasure is not implemented for this Json Element!")
+    }
+
+    fun eraseElement(valueToErase: JsonElement) {
+        throw NotImplementedError("Value erasure is not implemented for this Json Element!")
+    }
+
     /**
      * Entry point for a Visitor. Follows Visitor design pattern to allow
      * performing additional logic onto JSON Elements.
