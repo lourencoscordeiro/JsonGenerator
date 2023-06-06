@@ -23,7 +23,10 @@ data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
             throw IllegalArgumentException("No duplicate keys on a JSON Object allowed!")
         }
         val attribute = newValue as JsonKeyValuePair
-        observers.forEach { attribute.value.addObserver(it) }
+        observers.forEach {
+            attribute.addObserver(it)
+            attribute.value.addObserver(it)
+        }
         attributes = attributes.plus(attribute)
         observers.forEach { it.addedElement(newValue) }
     }

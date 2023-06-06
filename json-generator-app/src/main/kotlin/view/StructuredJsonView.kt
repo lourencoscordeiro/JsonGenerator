@@ -27,15 +27,9 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
             border = BorderFactory.createLineBorder(Color.GRAY, 1)
 
             layout = GridBagLayout()
-            //layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
-            //alignmentX = Component.LEFT_ALIGNMENT
-            //alignmentY = Component.TOP_ALIGNMENT
             name = "mainPanel"
-
-
             // Add padding to the top and left
             border = BorderFactory.createEmptyBorder(10, 20, 0, 0)
-
             // menu
             addMouseListener(object : MouseAdapter() {
                 override fun mouseClicked(e: MouseEvent) {
@@ -93,11 +87,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
         }
         panel.add(newKeyValuePairPanel,gbc)
 
-        //panel.add(Box.createRigidArea(Dimension(0, 1)))
-
         menu.isVisible = false
-        panel.revalidate()
-        panel.repaint()
         repaintWindow(panel)
     }
 
@@ -118,7 +108,6 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
             border = BorderFactory.createLineBorder(Color.GRAY, 1)
             alignmentX = Component.LEFT_ALIGNMENT
             alignmentY = Component.TOP_ALIGNMENT
-            //maximumSize = Dimension(Int.MAX_VALUE, 20)
 
             add(JLabel(keyValuePair.name))
             add(Box.createHorizontalStrut(10))
@@ -160,11 +149,6 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
     private fun createPanel():JPanel =
         JPanel().apply {
             layout = GridLayout(0,1)
-            //componentOrientation =
-            /*layout = BoxLayout(this,BoxLayout.Y_AXIS)
-            alignmentX = Component.LEFT_ALIGNMENT
-            alignmentY = Component.TOP_ALIGNMENT*/
-            // border = BorderFactory.createLineBorder(Color.BLACK, 2)
         }
     private fun addValuesToList(jsonArray:JsonArray,parent:JPanel) {
         val menu = JPopupMenu("Message")
@@ -177,7 +161,7 @@ class StructuredJsonView(private val rootJsonObject: JsonObject, private val gbc
             val command = AddElementCommand(jsonArray, text)
             command.run()
             val label = JLabel(text)
-            label.maximumSize = Dimension(Int.MAX_VALUE,20)
+            label.maximumSize = Dimension(Int.MAX_VALUE,30)
             parent.add(label)
             menu.isVisible = false
             repaintWindow(parent)
