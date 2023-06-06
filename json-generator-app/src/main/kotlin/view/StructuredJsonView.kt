@@ -113,37 +113,43 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
             add(JLabel(keyValuePair.name))
             add(Box.createHorizontalStrut(10))
             val value = keyValuePair.value
-            if (value is JsonArray) {
-                val panel = createPanel()
-                panel.name = keyValuePair.name
-                this@apply.addMouseListener(object : MouseAdapter() {
-                    override fun mouseClicked(e: MouseEvent) {
-                        if (SwingUtilities.isRightMouseButton(e)) {
-                            addValuesToList(value, panel)
+            when (value) {
+                is JsonArray -> {
+                    val panel = createPanel()
+                    panel.name = keyValuePair.name
+                    this@apply.addMouseListener(object : MouseAdapter() {
+                        override fun mouseClicked(e: MouseEvent) {
+                            if (SwingUtilities.isRightMouseButton(e)) {
+                                addValuesToList(value, panel)
+                            }
                         }
-                    }
-                })
-                add(panel)
-            } else if (value is JsonObject) {
-                val panel =createPanel()
-                panel.name = keyValuePair.name
-                this@apply.addMouseListener(object : MouseAdapter() {
-                    override fun mouseClicked(e: MouseEvent) {
-                        if (SwingUtilities.isRightMouseButton(e)) {
-                            addComponent(panel, value)
+                    })
+                    add(panel)
+                }
+
+                is JsonObject -> {
+                    val panel =createPanel()
+                    panel.name = keyValuePair.name
+                    this@apply.addMouseListener(object : MouseAdapter() {
+                        override fun mouseClicked(e: MouseEvent) {
+                            if (SwingUtilities.isRightMouseButton(e)) {
+                                addComponent(panel, value)
+                            }
                         }
-                    }
-                })
-                add(panel)
-            } else {
-                add(
-                    createInteractiveLabel(
-                        keyValuePair.name,
-                        keyValuePair.value.toPrettyJsonString(0).replace("\"", ""),
-                        this@apply,
-                        keyValuePair
+                    })
+                    add(panel)
+                }
+
+                else -> {
+                    add(
+                        createInteractiveLabel(
+                            keyValuePair.name,
+                            keyValuePair.value.toPrettyJsonString(0).replace("\"", ""),
+                            this@apply,
+                            keyValuePair
+                        )
                     )
-                )
+                }
             }
         }
 
@@ -185,7 +191,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
                 checkbox.isSelected = element.value
                 checkbox.addActionListener {
                     val newValue = checkbox.isSelected
-                    val updatedElement = UpdateElementCommand(jsonArray,newValue).run()
+                    UpdateElementCommand(jsonArray,newValue).run()
 
                 }
                 parent.add(checkbox)
@@ -244,17 +250,17 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
 
     private fun submitChanges(textField:JTextField, jsonElement: JsonElement){
         val newValue = textField.text
-        val parentNode = textField.parent as JPanel;
+        val parentNode = textField.parent as JPanel
         val elementModifier = UpdateElementCommand(jsonElement, Pair(textField.name, newValue))
         elementModifier.run()
         val value = elementModifier.getNewElement() as JsonKeyValuePair
-        var element:Component
+        val element:Component
         if (value.value is JsonBoolean){
             element = JCheckBox()
             element.isSelected = (value.value as JsonBoolean).value
             element.addActionListener {
-                val newValue = (element as JCheckBox).isSelected
-                val updatedElement = UpdateElementCommand(jsonElement,newValue).run()
+                val checkboxValue = element.isSelected
+                UpdateElementCommand(jsonElement,checkboxValue).run()
             }
 
         }else{

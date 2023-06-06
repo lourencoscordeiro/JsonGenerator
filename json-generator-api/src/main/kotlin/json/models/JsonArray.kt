@@ -2,7 +2,6 @@ package json.models
 
 import json.models.observability.JsonElementObserver
 import json.visitors.Visitor
-import java.util.Collections
 
 /**
  * Representation of a List in JSON.
