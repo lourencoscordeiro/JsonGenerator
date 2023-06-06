@@ -17,6 +17,9 @@ data class JsonArray(var elements: MutableList<JsonElement>) : JsonElement {
         observers.forEach { it.updatedElement(newValue.value) }
     }
     override fun addElement(newValue: JsonElement) {
+        if (newValue is JsonKeyValuePair && elements.any { it is JsonKeyValuePair && it.name == (newValue as JsonKeyValuePair).name }) {
+            throw IllegalArgumentException("No duplicate keys on a JSON Array allowed!")
+        }
         elements.add(newValue)
         observers.forEach{
             newValue.addObserver(it)
