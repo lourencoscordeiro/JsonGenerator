@@ -4,8 +4,6 @@ import json.generator.JsonGenerator
 import json.models.JsonElement
 import json.models.JsonObject
 import java.awt.Component
-import javax.swing.JPanel
-import javax.swing.JScrollPane
 import javax.swing.JViewport
 
 
@@ -60,7 +58,7 @@ class UpdateElementCommand(private val jsonElement: JsonElement, private var new
 
 }
 
-class EraseAllElementsCommand(private var jsonElement: JsonElement, private var panel:JPanel) : JsonUpdateCommand {
+class EraseAllElementsCommand(private var jsonElement: JsonElement, private var viewport:JViewport) : JsonUpdateCommand {
 
     private var wasRan: Boolean = false
     private lateinit var backupElement:JsonObject
@@ -93,23 +91,23 @@ class EraseAllElementsCommand(private var jsonElement: JsonElement, private var 
     }
 
 
-    private fun getViewport():JViewport?{
+    /*private fun getViewport():JViewport?{
         val scrollPane = panel.components.find { it.name == "scrollPane"  }
         if(scrollPane!=null)
             return (scrollPane as JScrollPane).viewport
         return null
-    }
+    }*/
 
     private fun getBackupComponent(): Component? {
-        return getViewport()?.components?.find { it.name == "mainPanel" }
+        return viewport.components.find { it.name == "mainPanel" }
     }
 
     private fun addComponent(component: Component){
-        getViewport()?.add(component)
+        viewport.add(component)
     }
 
     private fun removeComponent(component: Component){
-        getViewport()?.remove(component)
+        viewport.remove(component)
     }
 
 

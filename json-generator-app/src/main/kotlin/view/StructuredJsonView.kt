@@ -22,7 +22,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         }
         add(scrollPane, BorderLayout.CENTER)
 
-        val command = EraseAllElementsCommand(rootJsonObject,this)
+        val command = EraseAllElementsCommand(rootJsonObject,scrollPane.viewport)
 
         val eraseButton = JButton("Erase entire JSON Object")
         val undoButton = JButton("Undo Erase")
