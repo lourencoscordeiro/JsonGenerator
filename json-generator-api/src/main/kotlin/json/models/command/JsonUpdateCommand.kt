@@ -38,6 +38,7 @@ class UpdateElementCommand(private val jsonElement: JsonElement, private var new
 
     var wasRan: Boolean = false
 
+    fun getNewElement(): JsonElement = newValue as JsonElement
     override fun run() {
         newValue = generator.toJsonElement(newValue)
         jsonElement.updateElement(newValue as JsonElement)

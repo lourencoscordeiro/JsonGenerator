@@ -13,7 +13,7 @@ class DefaultTypeMapping : TypeMapping {
 
     override fun convertBoolean(boolean: Boolean): JsonBoolean = JsonBoolean(boolean)
 
-    override fun convertList(list: List<JsonElement>): JsonArray = JsonArray(list)
+    override fun convertList(list: MutableList<JsonElement>): JsonArray = JsonArray(list)
 
     override fun convertObject(objectDataMap: Map<String, JsonElement>): JsonObject =
         JsonObject(objectDataMap.map { JsonKeyValuePair(it.key, it.value) })

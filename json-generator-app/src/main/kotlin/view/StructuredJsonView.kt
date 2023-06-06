@@ -14,7 +14,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
 
         layout = BorderLayout()
 
-       val scrollPane = JScrollPane(structuredJsonViewPanel()).apply {
+        val scrollPane = JScrollPane(structuredJsonViewPanel()).apply {
             horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS
             verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_ALWAYS
         }
@@ -155,19 +155,51 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         val menu = JPopupMenu("Message")
         val addSimpleAttribute = JButton("Add")
 
+        val addListAttribute = JButton("Add list JSON attribute")
+        val addObjectAttribute = JButton("Add object JSON attribute")
+
+        addListAttribute.addActionListener {
+            val text = JOptionPane.showInputDialog("List Attribute Name")
+            // adds null element
+            val command =AddElementCommand(jsonArray, Pair(text, (mutableListOf<JsonElement>())))
+            helper(command,parent,menu)
+        }
+
+        addObjectAttribute.addActionListener {
+            val text = JOptionPane.showInputDialog("Object Attribute Name")
+            // adds null element
+            val command =  AddElementCommand(jsonArray, Pair(text,emptyMap<String,JsonElement>()))
+            helper(command,parent,menu)
+        }
+
+
         addSimpleAttribute.addActionListener {
             val text = JOptionPane.showInputDialog("Property Name")
 
             // adds null element
             val command = AddElementCommand(jsonArray, text)
             command.run()
-            val label = JLabel(text)
-            label.maximumSize = Dimension(Int.MAX_VALUE,30)
-            parent.add(label)
+            val element = command.getNewElement()
+            if (element is JsonBoolean){
+                val checkbox = JCheckBox()
+                checkbox.isSelected = element.value
+                checkbox.addActionListener {
+                    val newValue = checkbox.isSelected
+                    val updatedElement = UpdateElementCommand(jsonArray,newValue).run()
+
+                }
+                parent.add(checkbox)
+                repaintWindow(parent)
+            }else {
+                val label = createInteractiveLabel((parent.components.size).toString(), text, parent, jsonArray)
+                label.maximumSize = Dimension(Int.MAX_VALUE, 30)
+            }
             menu.isVisible = false
-            repaintWindow(parent)
         }
+
         menu.add(addSimpleAttribute)
+        menu.add(addListAttribute)
+        menu.add(addObjectAttribute)
         menu.show(this, 100, 100)
     }
 
@@ -201,23 +233,40 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
                 }
             }
         })
+        val index = parentNode.components.indexOf(label)
+        if(index != -1){
+            parentNode.remove(label)
+            parentNode.add(textField,BorderLayout.CENTER, index )
 
-        parentNode.remove(label)
-        parentNode.add(textField, BorderLayout.CENTER)
-
-        repaintWindow(parentNode)
+            repaintWindow(parentNode)
+        }
     }
 
     private fun submitChanges(textField:JTextField, jsonElement: JsonElement){
         val newValue = textField.text
-        val parent = textField.parent as JPanel
+        val parentNode = textField.parent as JPanel;
         val elementModifier = UpdateElementCommand(jsonElement, Pair(textField.name, newValue))
         elementModifier.run()
+        val value = elementModifier.getNewElement() as JsonKeyValuePair
+        var element:Component
+        if (value.value is JsonBoolean){
+            element = JCheckBox()
+            element.isSelected = (value.value as JsonBoolean).value
+            element.addActionListener {
+                val newValue = (element as JCheckBox).isSelected
+                val updatedElement = UpdateElementCommand(jsonElement,newValue).run()
+            }
 
-        val label = createInteractiveLabel(textField.name,newValue,parent,jsonElement)
-        parent.remove(textField)
-        parent.add(label)
-        repaintWindow(parent)
+        }else{
+            element = createInteractiveLabel(textField.name,newValue,parentNode,jsonElement)
+        }
+        val index = parentNode.components.indexOf(textField)
+        if(index != -1){
+            parentNode.remove(textField)
+            parentNode.add(element,BorderLayout.CENTER, index )
+
+            repaintWindow(parentNode)
+        }
         println(rootJsonObject.toPrettyJsonString(0))
     }
 

@@ -55,7 +55,7 @@ data class JsonGenerator(val typeMapping: TypeMapping = TypeMapping.default()) {
     }
 
     private fun mapList(list: Collection<*>): JsonArray {
-        return typeMapping.convertList(list.map { toJsonElement(it) })
+        return typeMapping.convertList(list.map { toJsonElement(it) }.toMutableList())
     }
 
     @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")

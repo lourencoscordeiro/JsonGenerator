@@ -2,30 +2,42 @@ package json.models
 
 import json.models.observability.JsonElementObserver
 import json.visitors.Visitor
+import java.util.Collections
 
 /**
  * Representation of a List in JSON.
  */
-data class JsonArray(var elements: List<JsonElement>) : JsonElement {
+data class JsonArray(var elements: MutableList<JsonElement>) : JsonElement {
 
     override val observers: MutableList<JsonElementObserver> = mutableListOf()
 
+
+    override fun updateElement(newValue: JsonElement) {
+        val element = newValue as JsonKeyValuePair
+        elements[element.name.toInt()] = element.value
+        observers.forEach { it.updatedElement(newValue.value) }
+    }
     override fun addElement(newValue: JsonElement) {
-        elements = elements.plus(newValue)
-        observers.forEach { it.addedElement(newValue) }
+        elements.add(newValue)
+        observers.forEach{
+            newValue.addObserver(it)
+            if(newValue is JsonKeyValuePair)
+                newValue.value.addObserver(it)
+
+        }
+        observers.forEach {
+            it.addedElement(newValue) }
     }
 
     override fun eraseAll() {
-        elements = listOf()
+        elements.clear()
         observers.forEach { it.erasedAll() }
     }
 
+
     override fun eraseElement(valueToErase: JsonElement) {
-        val index = elements.indexOf(valueToErase)
-        if (-1 != index) {
-            elements = elements.drop(index)
+            elements.remove(valueToErase)
             observers.forEach { it.erasedElement(this) }
-        }
     }
 
     override fun accept(visitor: Visitor) {

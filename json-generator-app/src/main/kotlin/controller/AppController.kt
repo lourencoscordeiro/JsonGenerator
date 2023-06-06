@@ -1,7 +1,9 @@
 package controller
 
 import json.models.JsonElement
+import json.models.JsonNumber
 import json.models.JsonObject
+import json.models.JsonString
 import view.RawJsonView
 import java.awt.Dimension
 import java.awt.GridLayout

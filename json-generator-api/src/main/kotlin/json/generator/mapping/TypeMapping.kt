@@ -33,7 +33,7 @@ interface TypeMapping {
      *
      * @param list original Kotlin List.
      */
-    fun convertList(list: List<JsonElement>): JsonArray
+    fun convertList(list: MutableList<JsonElement>): JsonArray
 
     /**
      * Converts a Data Class data into a [JsonObject]
