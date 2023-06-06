@@ -2,6 +2,7 @@ package view
 
 import json.models.*
 import json.models.command.AddElementCommand
+import json.models.command.EraseAllElementsCommand
 import json.models.command.UpdateElementCommand
 import java.awt.*
 import java.awt.event.*
@@ -17,8 +18,46 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         val scrollPane = JScrollPane(structuredJsonViewPanel()).apply {
             horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS
             verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_ALWAYS
+            name = "scrollPane"
         }
         add(scrollPane, BorderLayout.CENTER)
+
+        val command = EraseAllElementsCommand(rootJsonObject,this)
+
+        val eraseButton = JButton("Erase entire JSON Object")
+        val undoButton = JButton("Undo Erase")
+        val buttonPanel = JPanel(FlowLayout())
+        eraseButton.addActionListener{
+            command.run()
+            val panel = structuredJsonViewPanel()
+            panel.addContainerListener(object: ContainerListener{
+                override fun componentAdded(e: ContainerEvent) {
+                    buttonPanel.remove(undoButton)
+                    repaintWindow(buttonPanel)
+                }
+
+                override fun componentRemoved(e: ContainerEvent) {
+                    buttonPanel.remove(undoButton)
+                    repaintWindow(buttonPanel)
+                }
+            })
+
+            scrollPane.viewport.add(panel)
+            buttonPanel.add(undoButton,BorderLayout.SOUTH)
+            repaintWindow(this)
+        }
+        undoButton.addActionListener{
+            command.undo()
+            rootJsonObject.notifyObservers()
+            buttonPanel.remove(undoButton)
+            repaintWindow(this)
+        }
+        buttonPanel.add(eraseButton)
+        add(buttonPanel, BorderLayout.SOUTH)
+
+        repaintWindow(this)
+
+
         maximumSize = Dimension(300,Int.MAX_VALUE)
     }
 
@@ -47,7 +86,6 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         val addSimpleAttribute = JButton("Add simple JSON attribute")
         val addListAttribute = JButton("Add array JSON attribute")
         val addObjectAttribute = JButton("Add object JSON attribute")
-        val eraseAll = JButton("Erase entire JSON object")
 
         addSimpleAttribute.addActionListener {
             val text = JOptionPane.showInputDialog("Property Name")

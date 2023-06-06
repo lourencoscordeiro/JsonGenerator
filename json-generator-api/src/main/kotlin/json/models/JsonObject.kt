@@ -9,6 +9,7 @@ import json.visitors.Visitor
 data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
     JsonElement {
 
+    override val observers: MutableList<JsonElementObserver> = mutableListOf()
     init {
         val duplicateAttributes = attributes.groupBy { it.name }.filter { it.value.size > 1 }.flatMap { it.value }
         if (duplicateAttributes.isNotEmpty()) {
@@ -16,19 +17,24 @@ data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
         }
     }
 
-    override val observers: MutableList<JsonElementObserver> = mutableListOf()
 
     override fun addElement(newValue: JsonElement) {
         if (attributes.any { it.name == (newValue as JsonKeyValuePair).name }) {
             throw IllegalArgumentException("No duplicate keys on a JSON Object allowed!")
         }
-        val attribute = newValue as JsonKeyValuePair
-        observers.forEach {
+        if(newValue is JsonObject){
+            newValue.attributes.forEach{
+                addElement(it)
+            }
+        }else{
+            val attribute = newValue as JsonKeyValuePair
+            attributes = attributes.plus(attribute)
+            observers.forEach {
             attribute.addObserver(it)
             attribute.value.addObserver(it)
+            }
+            observers.forEach { it.addedElement(newValue) }
         }
-        attributes = attributes.plus(attribute)
-        observers.forEach { it.addedElement(newValue) }
     }
 
     override fun updateElement(newValue: JsonElement) {
@@ -42,6 +48,9 @@ data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
 
     override fun eraseAll() {
         attributes = listOf()
+        notifyObservers()
+    }
+    fun notifyObservers(){
         observers.forEach { it.erasedAll() }
     }
 
@@ -64,4 +73,13 @@ data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
         attributes.joinToString(", ", "{", "\n${createIndentation(depth)}}") { "\n${it.toPrettyJsonString(depth + 1)}" }
 
     private fun createIndentation(indentationRatio: Int): String = "\t".repeat(indentationRatio)
+
+
+    fun copy(): JsonObject {
+        val jsonObject =  JsonObject(attributes = attributes.toMutableList())
+        observers.forEach{
+            jsonObject.addObserver(it)
+        }
+        return jsonObject
+    }
 }
