@@ -16,7 +16,7 @@ class DefaultTypeMapping : TypeMapping {
     override fun convertList(list: MutableList<JsonElement>): JsonArray = JsonArray(list)
 
     override fun convertObject(objectDataMap: Map<String, JsonElement>): JsonObject =
-        JsonObject(objectDataMap.map { JsonKeyValuePair(it.key, it.value) })
+        JsonObject(objectDataMap.map { JsonKeyValuePair(it.key, it.value) }.toMutableList())
 
     override fun createNullNode(): JsonNullNode = JsonNullNode()
 }

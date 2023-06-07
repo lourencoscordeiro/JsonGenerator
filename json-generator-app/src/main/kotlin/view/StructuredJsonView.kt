@@ -3,6 +3,7 @@ package view
 import json.models.*
 import json.models.command.AddElementCommand
 import json.models.command.EraseAllElementsCommand
+import json.models.command.EraseElementCommand
 import json.models.command.UpdateElementCommand
 import java.awt.*
 import java.awt.event.*
@@ -73,7 +74,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
             addMouseListener(object : MouseAdapter() {
                 override fun mouseClicked(e: MouseEvent) {
                     if (SwingUtilities.isRightMouseButton(e)) {
-                        addComponent(this@apply)
+                        addComponent(this@apply).show(this@apply, 100, 100)
                     }
                 }
             })
@@ -81,7 +82,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
 
 
 
-    private fun addComponent(panel:JPanel,jsonElement: JsonElement=rootJsonObject){
+    private fun addComponent(panel:JPanel,jsonElement: JsonElement=rootJsonObject):JPopupMenu{
         val menu = JPopupMenu("Message")
         val addSimpleAttribute = JButton("Add simple JSON attribute")
         val addListAttribute = JButton("Add array JSON attribute")
@@ -111,14 +112,14 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         menu.add(addSimpleAttribute)
         menu.add(addListAttribute)
         menu.add(addObjectAttribute)
-        menu.show(this, 100, 100)
+        return menu
+    //menu.show(this, 100, 100)
 
     }
 
     private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
-        command.run()
 
-        val newKeyValuePairPanel = createKeyValuePairJPanel(command.getNewElement() as JsonKeyValuePair)
+        val newKeyValuePairPanel = createKeyValuePairJPanel(command,panel)
         if(panel.name == "mainPanel"){
             gbc.gridx=0
             gbc.fill = GridBagConstraints.HORIZONTAL
@@ -130,35 +131,30 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         repaintWindow(panel)
     }
 
+    private fun createKeyValuePairJPanel(command:AddElementCommand,parent:JPanel):JPanel =
 
-
-
-    private fun repaintWindow(panel: JPanel) {
-        panel.revalidate()
-        panel.repaint()
-    }
-
-
-
-    private fun createKeyValuePairJPanel(keyValuePair: JsonKeyValuePair):JPanel =
         JPanel().apply {
-            name = keyValuePair.name
+            command.run()
+            val element = command.getNewElement() as JsonKeyValuePair
+            name = element.name
             layout = BoxLayout(this, BoxLayout.X_AXIS)
             border = BorderFactory.createLineBorder(Color.GRAY, 1)
             alignmentX = Component.LEFT_ALIGNMENT
             alignmentY = Component.TOP_ALIGNMENT
 
-            add(JLabel(keyValuePair.name))
+            add(JLabel(element.name))
             add(Box.createHorizontalStrut(10))
-            val value = keyValuePair.value
+            val value = element.value
             when (value) {
                 is JsonArray -> {
                     val panel = createPanel()
-                    panel.name = keyValuePair.name
+                    panel.name = element.name
                     this@apply.addMouseListener(object : MouseAdapter() {
                         override fun mouseClicked(e: MouseEvent) {
                             if (SwingUtilities.isRightMouseButton(e)) {
-                                addValuesToList(value, panel)
+                                val menu = addValuesToList(value, panel)
+                                if(menu.components.find { it.name == "removeButton" } == null)menu.add(remove(command,this@apply,parent))
+                                menu.show(this@StructuredJsonView, 100, 100)
                             }
                         }
                     })
@@ -167,38 +163,57 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
 
                 is JsonObject -> {
                     val panel =createPanel()
-                    panel.name = keyValuePair.name
+                    panel.name = element.name
                     this@apply.addMouseListener(object : MouseAdapter() {
                         override fun mouseClicked(e: MouseEvent) {
                             if (SwingUtilities.isRightMouseButton(e)) {
-                                addComponent(panel, value)
+                                val menu =addComponent(panel, value)
+                                if(menu.components.find { it.name == "removeButton" } == null)menu.add(remove(command,this@apply,parent))
+                                menu.show(this@StructuredJsonView, 100, 100)
                             }
                         }
                     })
                     add(panel)
                 }
-
                 else -> {
-                    add(
-                        createInteractiveLabel(
-                            keyValuePair.name,
-                            keyValuePair.value.toPrettyJsonString(0).replace("\"", ""),
-                            this@apply,
-                            keyValuePair
-                        )
-                    )
+                    val menu = JPopupMenu("Message")
+                    val label =createInteractiveLabel(element.name, element.value.toPrettyJsonString(0).replace("\"", ""),element)
+                    label.addMouseListener(object : MouseAdapter() {
+                        override fun mouseClicked(e: MouseEvent) {
+                            if (SwingUtilities.isRightMouseButton(e)) {
+                                val removeButton = remove(command,this@apply,parent)
+                                if(menu.components.find { it.name == "removeButton" } == null)menu.add(removeButton)
+                                menu.show(this@StructuredJsonView, 100, 100)
+                            }
+                        }
+                    })
+                    add(label)
                 }
             }
         }
-
+    private fun remove(command:AddElementCommand,toRemove:Component,panel:JPanel):JButton{
+        val removeButton = JButton("Remove")
+        removeButton.name = "removeButton"
+        removeButton.addActionListener{
+            EraseElementCommand(command.getJsonElement(),command.getNewElement()).run()
+            panel.remove(toRemove)
+            val menu = removeButton.parent as JPopupMenu
+            menu.isVisible = false
+            repaintWindow(panel)
+        }
+        return removeButton
+    }
+    private fun repaintWindow(panel: JPanel) {
+        panel.revalidate()
+        panel.repaint()
+    }
     private fun createPanel():JPanel =
         JPanel().apply {
             layout = GridLayout(0,1)
         }
-    private fun addValuesToList(jsonArray:JsonArray,parent:JPanel) {
+    private fun addValuesToList(jsonArray:JsonArray,parent:JPanel):JPopupMenu {
         val menu = JPopupMenu("Message")
         val addSimpleAttribute = JButton("Add")
-
         val addListAttribute = JButton("Add list JSON attribute")
         val addObjectAttribute = JButton("Add object JSON attribute")
 
@@ -230,24 +245,45 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
                 checkbox.addActionListener {
                     val newValue = checkbox.isSelected
                     UpdateElementCommand(jsonArray,newValue).run()
-
                 }
+                checkbox.addMouseListener(object : MouseAdapter() {
+                    override fun mouseClicked(e: MouseEvent) {
+                        if (SwingUtilities.isRightMouseButton(e)) {
+                            val removeMenu = JPopupMenu("Message")
+                            val removeButton = remove(command,checkbox,parent)
+                            if(removeMenu.components.find { it.name == "removeButton" } == null)
+                                removeMenu.add(removeButton)
+                            removeMenu.show(parent, 100, 100)
+                        }
+                    }
+                })
                 parent.add(checkbox)
                 repaintWindow(parent)
             }else {
-                val label = createInteractiveLabel((parent.components.size).toString(), text, parent, jsonArray)
+                val label = createInteractiveLabel((parent.components.size).toString(), text, jsonArray)
                 label.maximumSize = Dimension(Int.MAX_VALUE, 30)
+                label.addMouseListener(object : MouseAdapter() {
+                    override fun mouseClicked(e: MouseEvent) {
+                        if (SwingUtilities.isRightMouseButton(e)) {
+                            val removeMenu = JPopupMenu("Message")
+                            val removeButton = remove(command,label,parent)
+                            if(removeMenu.components.find { it.name == "removeButton" } == null)removeMenu.add(removeButton)
+                            removeMenu.show(parent, 100, 100)
+                        }
+                    }
+                })
+                parent.add(label)
             }
             menu.isVisible = false
         }
-
+        repaintWindow(parent)
         menu.add(addSimpleAttribute)
         menu.add(addListAttribute)
         menu.add(addObjectAttribute)
-        menu.show(this, 100, 100)
+       return menu
     }
 
-    private fun createInteractiveLabel(key:String,text:String, parent:JPanel,jsonElement: JsonElement):JLabel {
+    private fun createInteractiveLabel(key:String,text:String,jsonElement: JsonElement):JLabel {
         val label = JLabel(text)
         label.name = key
         label.addMouseListener(object : MouseAdapter() {
@@ -257,8 +293,6 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
                 }
             }
         })
-        parent.add(label)
-        repaintWindow(parent)
         return label
     }
 
@@ -302,7 +336,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
             }
 
         }else{
-            element = createInteractiveLabel(textField.name,newValue,parentNode,jsonElement)
+            element = createInteractiveLabel(textField.name,newValue,jsonElement)
         }
         val index = parentNode.components.indexOf(textField)
         if(index != -1){

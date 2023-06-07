@@ -25,6 +25,7 @@ class AddElementCommand(private val jsonElement: JsonElement, private var newEle
     private var wasRan: Boolean = false
 
     fun getNewElement(): JsonElement = newElement as JsonElement
+    fun getJsonElement():JsonElement = jsonElement
 
     override fun run() {
         newElement = generator.toJsonElement(newElement)
@@ -90,28 +91,15 @@ class EraseAllElementsCommand(private var jsonElement: JsonElement, private var 
         wasRan = false
     }
 
-
-    /*private fun getViewport():JViewport?{
-        val scrollPane = panel.components.find { it.name == "scrollPane"  }
-        if(scrollPane!=null)
-            return (scrollPane as JScrollPane).viewport
-        return null
-    }*/
-
     private fun getBackupComponent(): Component? {
         return viewport.components.find { it.name == "mainPanel" }
     }
-
     private fun addComponent(component: Component){
         viewport.add(component)
     }
-
     private fun removeComponent(component: Component){
         viewport.remove(component)
     }
-
-
-
 }
 
 // todo here, erasedValue is the json element to be deleted. For arrays, it is a JsonElement, for objects it is a Json Key Value Pair

@@ -6,7 +6,7 @@ import json.visitors.Visitor
 /**
  * Representation of an Object in JSON. Consists on a map of its attributes (name and JSON Element).
  */
-data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
+data class JsonObject(var attributes: MutableList<JsonKeyValuePair> = mutableListOf<JsonKeyValuePair>()) :
     JsonElement {
 
     override val observers: MutableList<JsonElementObserver> = mutableListOf()
@@ -28,7 +28,7 @@ data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
             }
         }else{
             val attribute = newValue as JsonKeyValuePair
-            attributes = attributes.plus(attribute)
+            attributes.add(attribute)
             observers.forEach {
             attribute.addObserver(it)
             attribute.value.addObserver(it)
@@ -47,7 +47,7 @@ data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
     }
 
     override fun eraseAll() {
-        attributes = listOf()
+        attributes = mutableListOf()
         notifyObservers()
     }
     fun notifyObservers(){
@@ -57,7 +57,7 @@ data class JsonObject(var attributes: List<JsonKeyValuePair> = listOf()) :
     override fun eraseElement(valueToErase: JsonElement) {
         val index = attributes.indexOf(valueToErase)
         if (-1 != index) {
-            attributes = attributes.drop(index)
+            attributes.removeAt(index)
             observers.forEach { it.erasedElement(this) }
         }
     }
