@@ -48,9 +48,6 @@ data class JsonObject(var attributes: MutableList<JsonKeyValuePair> = mutableLis
 
     override fun eraseAll() {
         attributes = mutableListOf()
-        notifyObservers()
-    }
-    fun notifyObservers(){
         observers.forEach { it.erasedAll() }
     }
 
