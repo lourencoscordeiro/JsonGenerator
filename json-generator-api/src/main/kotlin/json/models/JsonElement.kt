@@ -1,7 +1,6 @@
 package json.models
 
 import json.models.observability.JsonElementObservable
-import json.printer.JsonElementPrinter
 import json.visitors.Visitor
 
 /**
@@ -35,11 +34,4 @@ interface JsonElement : JsonElementObservable {
      * Converts element to a formatted JSON string.
      */
     fun toPrettyJsonString(depth: Int): String
-
-    /**
-     * Prints the element.
-     */
-    fun print(printer: JsonElementPrinter = JsonElementPrinter.toConsole()) {
-        printer.print(this)
-    }
 }
