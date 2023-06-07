@@ -8,6 +8,7 @@ import javax.swing.*
 
 class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc:GridBagConstraints = GridBagConstraints()) : JPanel() {
 
+    private val undoStack = mutableListOf<JsonUpdateCommand>()
     private lateinit var command:JsonUpdateCommand
     private val buttonPanel = JPanel(FlowLayout())
     private val undoButton = JButton("Undo")
@@ -30,6 +31,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         eraseButton.addActionListener{
             command = EraseAllElementsCommand(rootJsonObject,scrollPane.viewport)
             command.run()
+            undoStack.add(command)
             val panel = structuredJsonViewPanel()
 
 
@@ -38,9 +40,12 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
             addUndoButtonIfNeeded()
             repaintWindow(this)
         }
-        undoButton.addActionListener{
-            command.undo()
-            rootJsonObject.notifyObservers()
+
+        undoButton.addActionListener {
+            if (undoStack.isNotEmpty()) {
+                undoStack.removeLast().undo()
+                rootJsonObject.notifyObservers()
+            }
             repaintWindow(this)
         }
 
@@ -79,8 +84,6 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
             })
         }
 
-
-
     private fun addComponent(panel:JPanel,jsonElement: JsonElement=rootJsonObject):JPopupMenu{
         val menu = JPopupMenu("Message")
         val addSimpleAttribute = JButton("Add simple JSON attribute")
@@ -115,8 +118,6 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         menu.add(addListAttribute)
         menu.add(addObjectAttribute)
         return menu
-    //menu.show(this, 100, 100)
-
     }
 
     private fun helper(command:AddElementCommand,panel:JPanel,menu:JPopupMenu){
@@ -137,6 +138,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
 
         JPanel().apply {
             command.run()
+            undoStack.add(command)
             val element = command.getNewElement() as JsonKeyValuePair
             name = element.name
             layout = BoxLayout(this, BoxLayout.X_AXIS)
@@ -193,11 +195,14 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
                 }
             }
         }
+
     private fun remove(command:AddElementCommand,toRemove:Component,panel:JPanel):JButton{
         val removeButton = JButton("Remove")
         removeButton.name = "removeButton"
-        removeButton.addActionListener{
-            EraseElementCommand(command.getJsonElement(),command.getNewElement()).run()
+        removeButton.addActionListener {
+            val eraseAllElementsCommand = EraseElementCommand(command.getJsonElement(), command.getNewElement())
+            eraseAllElementsCommand.run()
+            undoStack.add(eraseAllElementsCommand)
             panel.remove(toRemove)
             val menu = removeButton.parent as JPopupMenu
             menu.isVisible = false
@@ -206,10 +211,16 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         return removeButton
     }
 
+    private fun repaintWindow(panel: JPanel) {
+        panel.revalidate()
+        panel.repaint()
+    }
+
     private fun createPanel():JPanel =
         JPanel().apply {
             layout = GridLayout(0,1)
         }
+
     private fun addValuesToList(jsonArray:JsonArray,parent:JPanel):JPopupMenu {
         val menu = JPopupMenu("Message")
         val addSimpleAttribute = JButton("Add")
@@ -232,7 +243,6 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
             helper(command as AddElementCommand,parent,menu)
         }
 
-
         addSimpleAttribute.addActionListener {
             val text = JOptionPane.showInputDialog("Property Name")
 
@@ -240,13 +250,16 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
             this.command = AddElementCommand(jsonArray, text,parent)
             addUndoButtonIfNeeded()
             command.run()
+            undoStack.add(command)
             val element = (command as AddElementCommand).getNewElement()
             if (element is JsonBoolean){
                 val checkbox = JCheckBox()
                 checkbox.isSelected = element.value
                 checkbox.addActionListener {
                     val newValue = checkbox.isSelected
-                    UpdateElementCommand(jsonArray,newValue,parent,checkbox).run()
+                    this.command = UpdateElementCommand(jsonArray, newValue)
+                    command.run()
+                    undoStack.add(command)
                 }
                 checkbox.addMouseListener(object : MouseAdapter() {
                     override fun mouseClicked(e: MouseEvent) {
@@ -327,6 +340,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         val parentNode = textField.parent as JPanel
         this.command = UpdateElementCommand(jsonElement, Pair(textField.name, newValue),parentNode,label)
         this.command.run()
+        undoStack.add(command)
         val value = (command as UpdateElementCommand).getNewElement() as JsonKeyValuePair
         val element:Component
         if (value.value is JsonBoolean){
@@ -349,12 +363,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
         }
         println(rootJsonObject.toPrettyJsonString(0))
     }
-
-
-        private fun repaintWindow(panel: JPanel) {
-            panel.revalidate()
-            panel.repaint()
-        }
+    
 
 
 }
