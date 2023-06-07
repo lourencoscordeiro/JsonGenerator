@@ -257,7 +257,7 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
                 checkbox.isSelected = element.value
                 checkbox.addActionListener {
                     val newValue = checkbox.isSelected
-                    this.command = UpdateElementCommand(jsonArray, newValue)
+                    this.command = UpdateElementCommand(jsonArray, newValue,parent,checkbox)
                     command.run()
                     undoStack.add(command)
                 }
@@ -348,7 +348,10 @@ class StructuredJsonView(private var rootJsonObject: JsonObject, private val gbc
             element.isSelected = (value.value as JsonBoolean).value
             element.addActionListener {
                 val checkboxValue = element.isSelected
-                UpdateElementCommand(jsonElement,checkboxValue,parentNode,element).run()
+                this.command = UpdateElementCommand(jsonElement,checkboxValue,parentNode,element)
+                command.run()
+                undoStack.add(command)
+
             }
 
         }else{

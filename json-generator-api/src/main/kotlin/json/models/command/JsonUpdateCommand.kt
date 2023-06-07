@@ -3,7 +3,6 @@ package json.models.command
 import json.generator.JsonGenerator
 import json.models.*
 import java.awt.Component
-import java.awt.Panel
 import javax.swing.JCheckBox
 import javax.swing.JPanel
 import javax.swing.JViewport
@@ -25,6 +24,7 @@ interface JsonUpdateCommand {
 class AddElementCommand(private val jsonElement: JsonElement, private var newElement: Any?, private val parent:JPanel) : JsonUpdateCommand {
 
     private var wasRan: Boolean = false
+    private lateinit var backupElement: JsonElement
 
     fun getNewElement(): JsonElement = newElement as JsonElement
     fun getJsonElement():JsonElement = jsonElement
@@ -32,13 +32,22 @@ class AddElementCommand(private val jsonElement: JsonElement, private var newEle
     override fun run() {
         newElement = generator.toJsonElement(newElement)
         jsonElement.addElement(newElement as JsonElement)
+        createBackup()
         wasRan = true
     }
 
+    fun createBackup(){
+        if(jsonElement is JsonArray){
+            if(!(newElement is JsonObject) && !(newElement is JsonArray) && !(newElement is JsonKeyValuePair)) {
+                val index = jsonElement.elements.indexOf(newElement)
+                backupElement = JsonKeyValuePair(index.toString(),newElement as JsonElement)
+            }
+        }
+    }
     override fun undo() {
         if (wasRan) {
             jsonElement.eraseElement(newElement as JsonElement)
-            val toRemove = parent.components.find { it.name == (newElement as JsonKeyValuePair).name }
+            val toRemove = parent.components.find { it.name == (backupElement as JsonKeyValuePair).name }
             parent.remove(toRemove)
             parent.revalidate()
             parent.repaint()
@@ -65,8 +74,8 @@ class UpdateElementCommand(private var jsonElement: JsonElement, private var new
     override fun undo() {
         if(wasRan){
             jsonElement.observers.forEach{backupElement.addObserver(it)}
-            jsonElement.updateElement(backupElement as JsonElement)
-            jsonElement.observers.forEach{it.updatedElement(backupElement as JsonElement)}
+            jsonElement.updateElement(backupElement)
+            jsonElement.observers.forEach{it.updatedElement(backupElement)}
             if(component is JCheckBox){
                 (component as JCheckBox).isSelected = !(component as JCheckBox).isSelected
             }else{
