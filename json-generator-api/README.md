@@ -297,3 +297,31 @@ val example = ExampleObject("John", 23)
 val jsonObject = JsonGenerator(CustomTypeMappingWithDelegation())
 jsonObject.accept(CustomVisitor())
 ```
+
+### Observability
+
+JSON Models respond to observability. This means that if you need something to happen triggered by an operation of 
+an JSON Element, it is possible.
+
+```kotlin
+data class ExampleObject(val name: String, age: Int) { }
+
+class ExampleObserver : JsonElementObserver {
+    
+    override fun addedElement(newValue: JsonElement) {
+        println("$newValue was added to the list")
+    }
+    
+}
+
+val jsonList = JsonGenerator().toJsonElement(listOf(1,2,3,4))
+```
+
+With the code above, when executing
+
+```kotlin
+jsonList.addElement(5)
+```
+
+The element `5` will be added to the JSON List and `5 was added to the list` will be printed to the console.
+
