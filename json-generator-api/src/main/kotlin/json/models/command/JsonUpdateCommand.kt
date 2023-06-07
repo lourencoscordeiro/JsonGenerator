@@ -42,6 +42,8 @@ class AddElementCommand(private val jsonElement: JsonElement, private var newEle
                 val index = jsonElement.elements.indexOf(newElement)
                 backupElement = JsonKeyValuePair(index.toString(),newElement as JsonElement)
             }
+        }else{
+            backupElement = newElement as JsonElement
         }
     }
     override fun undo() {
