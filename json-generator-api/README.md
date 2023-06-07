@@ -272,3 +272,8 @@ This will produce:
   "isForeigner": "true"
 }
 ```
+
+### Visitors
+
+JSON Models allow the usage of visitors. Following the Visitor Design Pattern, this is an entrypoint for the API user
+to be able to perform actions within the models.
