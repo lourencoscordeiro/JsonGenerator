@@ -277,3 +277,23 @@ This will produce:
 
 JSON Models allow the usage of visitors. Following the Visitor Design Pattern, this is an entrypoint for the API user
 to be able to perform actions within the models.
+
+```kotlin
+data class CustomVisitor : Visitor {
+
+    var isValid = true
+
+    override fun visit(number: JsonNumber) {
+        if (number.value != 18) {
+            isValid = false
+        }
+    }
+
+    fun isDataValid() = isValid
+
+}
+
+val example = ExampleObject("John", 23)
+val jsonObject = JsonGenerator(CustomTypeMappingWithDelegation())
+jsonObject.accept(CustomVisitor())
+```
