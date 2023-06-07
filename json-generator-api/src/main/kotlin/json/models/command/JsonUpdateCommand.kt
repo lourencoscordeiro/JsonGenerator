@@ -1,9 +1,11 @@
 package json.models.command
 
 import json.generator.JsonGenerator
-import json.models.JsonElement
-import json.models.JsonObject
+import json.models.*
 import java.awt.Component
+import java.awt.Panel
+import javax.swing.JCheckBox
+import javax.swing.JPanel
 import javax.swing.JViewport
 
 
@@ -20,7 +22,7 @@ interface JsonUpdateCommand {
     fun undo()
 }
 
-class AddElementCommand(private val jsonElement: JsonElement, private var newElement: Any?) : JsonUpdateCommand {
+class AddElementCommand(private val jsonElement: JsonElement, private var newElement: Any?, private val parent:JPanel) : JsonUpdateCommand {
 
     private var wasRan: Boolean = false
 
@@ -36,28 +38,62 @@ class AddElementCommand(private val jsonElement: JsonElement, private var newEle
     override fun undo() {
         if (wasRan) {
             jsonElement.eraseElement(newElement as JsonElement)
+            val toRemove = parent.components.find { it.name == (newElement as JsonKeyValuePair).name }
+            parent.remove(toRemove)
+            parent.revalidate()
+            parent.repaint()
         }
         wasRan = false
     }
 
 }
 
-class UpdateElementCommand(private val jsonElement: JsonElement, private var newValue: Any) : JsonUpdateCommand {
+class UpdateElementCommand(private var jsonElement: JsonElement, private var newValue: Any,private var parent: JPanel,private var component:Component) : JsonUpdateCommand {
 
     private var wasRan: Boolean = false
+    private lateinit var backupElement:JsonElement
+    private lateinit var backupComponent:Component
 
     fun getNewElement(): JsonElement = newValue as JsonElement
     override fun run() {
         newValue = generator.toJsonElement(newValue)
+        createBackup()
         jsonElement.updateElement(newValue as JsonElement)
         wasRan = true
     }
 
     override fun undo() {
-        TODO("Not yet implemented")
+        if(wasRan){
+            jsonElement.observers.forEach{backupElement.addObserver(it)}
+            jsonElement.updateElement(backupElement as JsonElement)
+            jsonElement.observers.forEach{it.updatedElement(backupElement as JsonElement)}
+            if(component is JCheckBox){
+                (component as JCheckBox).isSelected = !(component as JCheckBox).isSelected
+            }else{
+                val element = parent.components.find{it.name == backupComponent.name}
+                parent.remove(element)
+                parent.add(backupComponent)
+            }
+        }
+        wasRan = false
     }
-
+    private fun createBackup(){
+        createElementBackup()
+        createComponentBackup()
+    }
+    private fun createElementBackup() {
+        backupElement = when (jsonElement) {
+            is JsonObject -> (jsonElement as JsonObject).attributes.find { it.name == (jsonElement as JsonKeyValuePair).name } as JsonElement
+            is JsonArray -> JsonKeyValuePair((newValue as JsonKeyValuePair).name,(jsonElement as JsonArray).elements[(newValue as JsonKeyValuePair).name.toInt()] )
+            is JsonKeyValuePair -> (jsonElement as JsonKeyValuePair).copy()
+            else -> throw IllegalArgumentException("Unsupported JsonElement type: ${jsonElement.javaClass.simpleName}")
+        }
+    }
+    private fun createComponentBackup(){
+        backupComponent = component
+    }
 }
+
 
 class EraseAllElementsCommand(private var jsonElement: JsonElement, private var viewport:JViewport) : JsonUpdateCommand {
 

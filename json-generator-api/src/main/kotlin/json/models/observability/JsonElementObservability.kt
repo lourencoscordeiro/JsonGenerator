@@ -33,6 +33,9 @@ interface JsonElementObservable {
         observers.remove(jsonElementObserver)
     }
 
+    fun notifyObservers(){
+        observers.forEach { it.erasedAll() }
+    }
 
 }
 

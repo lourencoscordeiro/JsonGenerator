@@ -50,9 +50,6 @@ data class JsonObject(var attributes: MutableList<JsonKeyValuePair> = mutableLis
         attributes = mutableListOf()
         notifyObservers()
     }
-    fun notifyObservers(){
-        observers.forEach { it.erasedAll() }
-    }
 
     override fun eraseElement(valueToErase: JsonElement) {
         val index = attributes.indexOf(valueToErase)
